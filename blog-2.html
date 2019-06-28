@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
- <title>Python for Data Scientists</title>
+ <title>Automated Feature Selection</title>
  <!-- Latest compiled and minified CSS -->
  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
  <div class="container">
@@ -12,12 +12,249 @@
  <div class="container">
 <div class="row">
  <div class="col-md-8">
-  <h3>Python for Data Scientists</h3>
-  <label>2019-06-13</label>
-  <h1><u>Python for Data Scientists</u></h1>
-<h3>Hello World</h3>
-<p>Let me tell you one of the biggest misconceptions aspiring data science newbies have nowadays. Real-world work is not something that the newbies think while studying in school. Unfortunately, you will surprise that the real-world projects give you a headache with data cleaning. In fact, 70%-80% of your time should just be collecting and cleaning data. You have to work with messy and unclean data. And, it is something that eventually becomes part of your routine work.</p>
-<p>In school, we could be provided datasets which are clean and spotless. For example, hackathons and Kaggle have a good database that we can download them and start working on the problem. Moreover, accuracy is not always the primary goal. Sometimes, you don’t really need a result as 1 plus 1 equal 2. Your boss just might want to know how you can optimize your algorithm for impact, not for the increasing of accuracy. </p>
+  <h3>Automated Feature Selection</h3>
+  <label>2019-06-28</label>
+  <p>In our projects, we often deal with datasets containing many variables. Some of them may decrease the accuracy of models. Today, I am going to show you some automatic ways of selecting relevant features.
+Imagine that you got a dataset with hundreds of variables and you do not know if all of them are relevant in the predictive modelling problem.</p>
+<p>Feature engineering is an essential parameter of a successful model.</p>
+<p>The process of identifying or excluding not necessary variables is called feature selection and in most scenarios it is defined through an automated algorithm.</p>
+<p>Why feature selection makes our approach more efficient:
+    - It helps to avoid overfitting as less redundant data is present after feature selection.
+    - It may increase prediction performance, as learning will concentrate only on meaningful data.
+    - It reduces execution time and is memory-efficient as there is less data to process.</p>
+<h1>Univariate statistics</h1>
+<p>The simplest method to select features is using univariate statistics, that is by looking at each feature individually and running a statistical test to see whether it is related to the target. This kind of test is also known as analysis of variance (ANOVA).</p>
+<p>We create a synthetic dataset that consists of the breast cancer data with an additional 50 completely random features.</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">sklearn.datasets</span> <span class="kn">import</span> <span class="n">load_breast_cancer</span><span class="p">,</span> <span class="n">load_digits</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+
+<span class="n">cancer</span> <span class="o">=</span> <span class="n">load_breast_cancer</span><span class="p">()</span>
+
+<span class="n">cancer</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="c1"># get deterministic random numbers</span>
+<span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">noise</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">cancer</span><span class="o">.</span><span class="n">data</span><span class="p">),</span> <span class="mi">50</span><span class="p">))</span>
+<span class="c1"># add noise features to the data</span>
+<span class="c1"># the first 30 features are from the dataset, the next 50 are noise</span>
+<span class="n">X_w_noise</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">cancer</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">noise</span><span class="p">])</span>
+
+<span class="n">X_w_noise</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
+
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X_w_noise</span><span class="p">,</span> <span class="n">cancer</span><span class="o">.</span><span class="n">target</span><span class="p">,</span>
+                                                    <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=.</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+
+
+<p>Univariate feature selection works by selecting the best features based on univariate statistical tests. It can be seen as a preprocessing step to an estimator. Scikit-learn exposes feature selection routines as objects that implement the transform method:</p>
+<div class="highlight"><pre><span></span><span class="o">-</span> <span class="nv">SelectKBest</span> <span class="nv">removes</span> <span class="nv">all</span> <span class="nv">but</span> <span class="nv">the</span>  <span class="nv">highest</span> <span class="nv">scoring</span> <span class="nv">features</span>.
+
+<span class="o">-</span> <span class="nv">SelectPercentile</span> <span class="nv">removes</span> <span class="nv">all</span> <span class="nv">but</span> <span class="nv">a</span> <span class="nv">user</span><span class="o">-</span><span class="nv">specified</span> <span class="nv">highest</span> <span class="nv">scoring</span> <span class="nv">percentage</span> <span class="nv">of</span> <span class="nv">features</span>.
+
+<span class="o">-</span> <span class="nv">Using</span> <span class="nv">common</span> <span class="nv">univariate</span> <span class="nv">statistical</span> <span class="nv">tests</span> <span class="k">for</span> <span class="nv">each</span> <span class="nv">feature</span>: <span class="nv">false</span> <span class="nv">positive</span> <span class="nv">rate</span> <span class="nv">SelectFpr</span>, <span class="nv">false</span> <span class="nv">discovery</span> <span class="nv">rate</span> <span class="nv">SelectFdr</span>, <span class="nv">or</span> <span class="nv">family</span> <span class="nv">wise</span> <span class="nv">error</span> <span class="nv">SelectFwe</span>.
+<span class="o">-</span> <span class="nv">GenericUnivariateSelect</span> <span class="nv">allows</span> <span class="nv">to</span> <span class="nv">perform</span> <span class="nv">univariate</span> <span class="nv">feature</span> <span class="nv">selection</span> <span class="nv">with</span> <span class="nv">a</span> <span class="nv">configurable</span> <span class="nv">strategy</span>. <span class="nv">This</span> <span class="nv">allows</span> <span class="nv">to</span> <span class="nv">select</span> <span class="nv">the</span> <span class="nv">best</span> <span class="nv">univariate</span> <span class="nv">selection</span> <span class="nv">strategy</span> <span class="nv">with</span> <span class="nv">hyper</span><span class="o">-</span><span class="nv">parameter</span> <span class="nv">search</span> <span class="nv">estimator</span>.
+</pre></div>
+
+
+<p>We have to define a threshold on the p-value of the statistical test to decide how many features to keep. There are several strategies implemented in scikit-learn, a straight-forward one being SelectPercentile, which selects a percentile of the original features (we select 50% below)</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.feature_selection</span> <span class="kn">import</span> <span class="n">SelectPercentile</span>
+
+<span class="c1"># use f_classif (the default) and SelectPercentile to select 50% of features:</span>
+<span class="n">select</span> <span class="o">=</span> <span class="n">SelectPercentile</span><span class="p">(</span><span class="n">percentile</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">select</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="c1"># # transform training set:</span>
+<span class="n">X_train_selected</span> <span class="o">=</span> <span class="n">select</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">X_train</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">X_train_selected</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+<span class="n">select</span><span class="o">.</span><span class="n">get_support</span><span class="p">()</span>
+</pre></div>
+
+
+<p>These objects take as input a scoring function that returns univariate scores and p-values (or only scores for SelectKBest and SelectPercentile):</p>
+<div class="highlight"><pre><span></span><span class="o">-</span> <span class="k">For</span> <span class="nv">regression</span>: <span class="nv">f_regression</span>, <span class="nv">mutual_info_regression</span>
+<span class="o">-</span> <span class="k">For</span> <span class="nv">classification</span>: <span class="nv">chi2</span>, <span class="nv">f_classif</span>, <span class="nv">mutual_info_classif</span>
+</pre></div>
+
+
+<p>The methods based on F-test estimate the degree of linear dependency between two random variables. On the other hand, mutual information methods can capture any kind of statistical dependency, but being nonparametric, they require more samples for accurate estimation.</p>
+<p>We can also use the test statistic directly to see how relevant each feature is. As the breast cancer dataset is a classification task, we use f_classif, the F-test for classification. Below we plot the p-values associated with each of the 80 features (30 original features + 50 noise features). Low p-values indicate informative features.</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.feature_selection</span> <span class="kn">import</span> <span class="n">f_classif</span><span class="p">,</span> <span class="n">f_regression</span><span class="p">,</span> <span class="n">chi2</span>
+
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+
+<span class="n">F</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="n">f_classif</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="s1">&#39;o&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<p>Clearly most of the first 30 features have very small p-values.</p>
+<p>Going back to the SelectPercentile transformer, we can obtain the features that are selected using the get_support method:</p>
+<div class="highlight"><pre><span></span><span class="n">mask</span> <span class="o">=</span> <span class="n">select</span><span class="o">.</span><span class="n">get_support</span><span class="p">()</span>
+<span class="k">print</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
+<span class="c1"># visualize the mask. black is True, white is False</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">matshow</span><span class="p">(</span><span class="n">mask</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray_r&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<p>Nearly all of the original 30 features were recovered. We can also analize the utility of the feature selection by training a supervised model on the data. It's important to learn the feature selection only on the training set!</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LogisticRegression</span>
+
+<span class="c1"># transform test data:</span>
+<span class="n">X_test_selected</span> <span class="o">=</span> <span class="n">select</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+<span class="n">lr</span> <span class="o">=</span> <span class="n">LogisticRegression</span><span class="p">(</span><span class="n">solver</span><span class="o">=</span><span class="s1">&#39;lbfgs&#39;</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">5000</span><span class="p">)</span>
+<span class="n">lr</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Score with all features: {lr.score(X_test, y_test)}&quot;</span><span class="p">)</span>
+<span class="n">lr</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train_selected</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Score with only selected features: {lr.score(X_test_selected, y_test)}&quot;</span><span class="p">)</span>
+</pre></div>
+
+
+<h1>Model-based Feature Selection</h1>
+<p>A somewhat more sophisticated method for feature selection is using a supervised machine learning model and selecting features based on how important they were deemed by the model. This requires the model to provide some way to rank the features by importance. This can be done for all tree-based models (which implement get_feature_importances) and all linear models, for which the coefficients can be used to determine how much influence a feature has on the outcome.</p>
+<p>Moreover, the obvious example is linear regression, which works by applying a coefficient multiplier to each of the features. Obviously, the higher the coefficient, the more valuable the feature.</p>
+<p>Any of these models can be made into a transformer that does feature selection by wrapping it with the SelectFromModel class:</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.feature_selection</span> <span class="kn">import</span> <span class="n">SelectFromModel</span>
+<span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="kn">import</span> <span class="n">RandomForestClassifier</span>
+
+<span class="n">select</span> <span class="o">=</span> <span class="n">SelectFromModel</span><span class="p">(</span><span class="n">RandomForestClassifier</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">),</span> <span class="n">max_features</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="n">select</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="n">X_train_rf</span> <span class="o">=</span> <span class="n">select</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">X_train</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">X_train_rf</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="n">mask</span> <span class="o">=</span> <span class="n">select</span><span class="o">.</span><span class="n">get_support</span><span class="p">()</span>
+<span class="c1"># visualize the mask. black is True, white is False</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">matshow</span><span class="p">(</span><span class="n">mask</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray_r&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="n">X_test_rf</span> <span class="o">=</span> <span class="n">select</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+<span class="n">LogisticRegression</span><span class="p">(</span><span class="n">solver</span><span class="o">=</span><span class="s1">&#39;lbfgs&#39;</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">5000</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train_rf</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_test_rf</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span>
+</pre></div>
+
+
+<p>This method builds a single model (in this case a random forest) and uses the feature importances from this model. We can do a somewhat more elaborate search by training multiple models on subsets of the data. One particular strategy is recursive feature elimination:</p>
+<h1>Recursive Feature Elimination</h1>
+<p>Recursive feature elimination builds a model on the full set of features, and similar to the method above selects a subset of features that are deemed most important by the model. However, usually only a single feature is dropped from the dataset, and a new model is built with the remaining features. The process of dropping features and model building is repeated until there are only a pre-specified number of features left:</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.feature_selection</span> <span class="kn">import</span> <span class="n">RFE</span>
+
+<span class="n">select</span> <span class="o">=</span> <span class="n">RFE</span><span class="p">(</span><span class="n">RandomForestClassifier</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">),</span> <span class="n">n_features_to_select</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+
+<span class="n">select</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="c1"># visualize the selected features:</span>
+<span class="n">mask</span> <span class="o">=</span> <span class="n">select</span><span class="o">.</span><span class="n">get_support</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">matshow</span><span class="p">(</span><span class="n">mask</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray_r&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="n">X_train_rfe</span> <span class="o">=</span> <span class="n">select</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
+<span class="n">X_test_rfe</span> <span class="o">=</span> <span class="n">select</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+<span class="n">LogisticRegression</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train_rfe</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_test_rfe</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="n">select</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span>
+</pre></div>
+
+
+<p>The advantage of this approach is that it will not remove variables which were deemed insignificant at the beginning of the process, but become more and more significant as lesser features are removed. For datasets with many variables relatively strongly correlated with one another and relatively weakly correlated with the target variable, this approach may result in slightly different feature choices from those made by naive model-based selection. The disadvantage is that since you have to train the model many times, this approach is multiplicatively slower than the one-and-done.</p>
+<h1>Wrapper Methods</h1>
+<p>This method can find the best set of features for a specific algorithm. However, a downside is that these set of features may not be optimal for every other machine learning algorithm.</p>
+<h4>Step Forward Feature Selection</h4>
+<p>In the first phase of the step forward feature selection, the performance of the classifier is evaluated with respect to each feature. The feature that performs the best is selected out of all the features.</p>
+<p>In the second step, the first feature is tried in combination with all the other features. The combination of two features that yield the best algorithm performance is selected. The process continues until the specified number of features are selected.</p>
+<p>Let's implement step forward feature selection in Python. We will be using the BNP Paribas Cardif Claims Management dataset for this section as we did in our previous article.</p>
+<p>To implement step forward feature selection, we need to convert categorical feature values into numeric feature values. However, for the sake of simplicity, we will remove all the non-categorical columns from our data. We will also remove the correlated columns as we did in the previous article so that we have a small feature set to process.</p>
+<p>Data Preprocessing
+The following script imports the dataset and the required libraries, it then removes the non-numeric columns from the dataset and then divides the dataset into training and testing sets. Finally, all the columns with a correlation of greater than 0.8 are removed. Take a look at this article for the detailed explanation of this script:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>  
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>  
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>  
+<span class="kn">from</span> <span class="nn">sklearn.feature_selection</span> <span class="kn">import</span> <span class="n">VarianceThreshold</span>
+
+<span class="n">paribas_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;E:\Datasets\paribas_data.csv&quot;</span><span class="p">,</span> <span class="n">nrows</span><span class="o">=</span><span class="mi">20000</span><span class="p">)</span>  
+<span class="n">paribas_data</span><span class="o">.</span><span class="n">shape</span>
+
+<span class="n">num_colums</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;int16&#39;</span><span class="p">,</span> <span class="s1">&#39;int32&#39;</span><span class="p">,</span> <span class="s1">&#39;int64&#39;</span><span class="p">,</span> <span class="s1">&#39;float16&#39;</span><span class="p">,</span> <span class="s1">&#39;float32&#39;</span><span class="p">,</span> <span class="s1">&#39;float64&#39;</span><span class="p">]</span>  
+<span class="n">numerical_columns</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">paribas_data</span><span class="o">.</span><span class="n">select_dtypes</span><span class="p">(</span><span class="n">include</span><span class="o">=</span><span class="n">num_colums</span><span class="p">)</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>  
+<span class="n">paribas_data</span> <span class="o">=</span> <span class="n">paribas_data</span><span class="p">[</span><span class="n">numerical_columns</span><span class="p">]</span>  
+<span class="n">paribas_data</span><span class="o">.</span><span class="n">shape</span>
+
+<span class="n">train_features</span><span class="p">,</span> <span class="n">test_features</span><span class="p">,</span> <span class="n">train_labels</span><span class="p">,</span> <span class="n">test_labels</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span>  
+    <span class="n">paribas_data</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">,</span> <span class="s1">&#39;ID&#39;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+    <span class="n">paribas_data</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">],</span>
+    <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="mi">41</span><span class="p">)</span>
+
+<span class="n">correlated_features</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>  
+<span class="n">correlation_matrix</span> <span class="o">=</span> <span class="n">paribas_data</span><span class="o">.</span><span class="n">corr</span><span class="p">()</span>  
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">correlation_matrix</span> <span class="o">.</span><span class="n">columns</span><span class="p">)):</span>  
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">correlation_matrix</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mf">0.8</span><span class="p">:</span>
+            <span class="n">colname</span> <span class="o">=</span> <span class="n">correlation_matrix</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">correlated_features</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">colname</span><span class="p">)</span>
+
+
+<span class="n">train_features</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="n">correlated_features</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>  
+<span class="n">test_features</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="n">correlated_features</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="n">train_features</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">test_features</span><span class="o">.</span><span class="n">shape</span>  
+</pre></div>
+
+
+<p>To select the most optimal features, we will be using SequentialFeatureSelector function from the mlxtend library. The library can be downloaded executing the following command at anaconda command prompt:</p>
+<p>conda install -c conda-forge mlxtend  </p>
+<p>We will use the Random Forest Classifier to find the most optimal parameters. The evaluation criteria used will be ROC-AUC. The following script selects the 10 features from our dataset that yields best performance for random forest classifier:</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="kn">import</span> <span class="n">RandomForestRegressor</span><span class="p">,</span> <span class="n">RandomForestClassifier</span>  
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">roc_auc_score</span>
+
+<span class="kn">from</span> <span class="nn">mlxtend.feature_selection</span> <span class="kn">import</span> <span class="n">SequentialFeatureSelector</span>
+
+<span class="n">feature_selector</span> <span class="o">=</span> <span class="n">SequentialFeatureSelector</span><span class="p">(</span><span class="n">RandomForestClassifier</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">),</span>  
+           <span class="n">k_features</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
+           <span class="n">forward</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+           <span class="n">verbose</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+           <span class="n">scoring</span><span class="o">=</span><span class="s1">&#39;roc_auc&#39;</span><span class="p">,</span>
+           <span class="n">cv</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="n">features</span> <span class="o">=</span> <span class="n">feature_selector</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">train_features</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)),</span> <span class="n">train_labels</span><span class="p">)</span>  
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="n">filtered_features</span><span class="o">=</span> <span class="n">train_features</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">features</span><span class="o">.</span><span class="n">k_feature_idx_</span><span class="p">)]</span>  
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="n">clf</span> <span class="o">=</span> <span class="n">RandomForestClassifier</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">41</span><span class="p">,</span> <span class="n">max_depth</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>  
+<span class="n">clf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train_features</span><span class="p">[</span><span class="n">filtered_features</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">train_labels</span><span class="p">)</span>
+
+<span class="n">train_pred</span> <span class="o">=</span> <span class="n">clf</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">train_features</span><span class="p">[</span><span class="n">filtered_features</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>  
+<span class="k">print</span><span class="p">(</span><span class="s1">&#39;Accuracy on training set: {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">roc_auc_score</span><span class="p">(</span><span class="n">train_labels</span><span class="p">,</span> <span class="n">train_pred</span><span class="p">[:,</span><span class="mi">1</span><span class="p">])))</span>
+
+<span class="n">test_pred</span> <span class="o">=</span> <span class="n">clf</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">test_features</span><span class="p">[</span><span class="n">filtered_features</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>  
+<span class="k">print</span><span class="p">(</span><span class="s1">&#39;Accuracy on test set: {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">roc_auc_score</span><span class="p">(</span><span class="n">test_labels</span><span class="p">,</span> <span class="n">test_pred</span> <span class="p">[:,</span><span class="mi">1</span><span class="p">])))</span>  
+</pre></div>
+
+
+<p>Accuracy on training set: 0.7072327148174093<br>
+Accuracy on test set: 0.7096973252804142  </p>
  </div>
 </div>
  </div>
