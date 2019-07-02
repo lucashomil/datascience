@@ -164,7 +164,6 @@ Imagine that you got a dataset with hundreds of variables and you do not know if
 &lt;h4&gt;Step Forward Feature Selection&lt;/h4&gt;
 &lt;p&gt;In the first phase of the step forward feature selection, the performance of the classifier is evaluated with respect to each feature. The feature that performs the best is selected out of all the features.&lt;/p&gt;
 &lt;p&gt;In the second step, the first feature is tried in combination with all the other features. The combination of two features that yield the best algorithm performance is selected. The process continues until the specified number of features are selected.&lt;/p&gt;
-&lt;p&gt;Let's implement step forward feature selection in Python. We will be using the BNP Paribas Cardif Claims Management dataset for this section as we did in our previous article.&lt;/p&gt;
 &lt;p&gt;To implement step forward feature selection, we need to convert categorical feature values into numeric feature values. However, for the sake of simplicity, we will remove all the non-categorical columns from our data. We will also remove the correlated columns as we did in the previous article so that we have a small feature set to process.&lt;/p&gt;
 &lt;p&gt;Data Preprocessing
 The following script imports the dataset and the required libraries, it then removes the non-numeric columns from the dataset and then divides the dataset into training and testing sets. Finally, all the columns with a correlation of greater than 0.8 are removed. Take a look at this article for the detailed explanation of this script:&lt;/p&gt;
