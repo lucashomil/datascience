@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
- <title>Python for Data Scientists</title>
+ <title>Data Cleaning</title>
  <!-- Latest compiled and minified CSS -->
  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
  <div class="container">
@@ -12,11 +12,3890 @@
  <div class="container">
 <div class="row">
  <div class="col-md-8">
-  <h3>Python for Data Scientists</h3>
+  <h3>Data Cleaning</h3>
   <label>2019-06-13</label>
-  <h3>Hello World</h3>
-<p>Let me tell you one of the biggest misconceptions aspiring data science newbies have nowadays. Real-world work is not something that the newbies think while studying in school. Unfortunately, you will surprise that the real-world projects give you a headache with data cleaning. In fact, 70%-80% of your time should just be collecting and cleaning data. You have to work with messy and unclean data. And, it is something that eventually becomes part of your routine work.</p>
+  <p>Let me tell you one of the biggest misconceptions aspiring data science newbies have nowadays. Real-world work is not something that the newbies think while studying in school. Unfortunately, you will surprise that the real-world projects give you a headache with data cleaning. In fact, 70%-80% of your time should just be collecting and cleaning data. You have to work with messy and unclean data. And, it is something that eventually becomes part of your routine work.</p>
 <p>In school, we could be provided datasets which are clean and spotless. For example, hackathons and Kaggle have a good database that we can download them and start working on the problem. Moreover, accuracy is not always the primary goal. Sometimes, you don’t really need a result as 1 plus 1 equal 2. Your boss just might want to know how you can optimize your algorithm for impact, not for the increasing of accuracy. </p>
+<p>Therefore, you should know how to deal with messy data, whether that means missing values, inconsistent formatting, malformed records, or nonsensical outliers, etc. In this blog, I’ll leverage Python’s Pandas and NumPy libraries to clean data.</p>
+<p>We will use a data set on Sacramento real estate sales as an example. The data set contains information on qualities of the property, location of the property, and time of sale.</p>
+<p>First of all, we need to import Numpy and Pandas libraries.</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="n">sac_csv</span> <span class="o">=</span> <span class="s1">&#39;sacramento_real_estate_transactions.csv&#39;</span>
+</pre></div>
+
+
+<h6>Check our Data … Quickly</h6>
+<p>The first thing you want to do when you get a new dataset, is to quickly to verify the contents with the .head(), .info(), .describe() methods.</p>
+<div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">sac_csv</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>street</th>
+      <th>city</th>
+      <th>zip</th>
+      <th>state</th>
+      <th>beds</th>
+      <th>baths</th>
+      <th>sq__ft</th>
+      <th>type</th>
+      <th>sale_date</th>
+      <th>price</th>
+      <th>latitude</th>
+      <th>longitude</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>3526 HIGH ST</td>
+      <td>SACRAMENTO</td>
+      <td>95838</td>
+      <td>CA</td>
+      <td>2</td>
+      <td>1</td>
+      <td>836</td>
+      <td>Residential</td>
+      <td>Wed May 21 00:00:00 EDT 2008</td>
+      <td>59222</td>
+      <td>38.631913</td>
+      <td>-121.434879</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>51 OMAHA CT</td>
+      <td>SACRAMENTO</td>
+      <td>95823</td>
+      <td>CA</td>
+      <td>3</td>
+      <td>1</td>
+      <td>1167</td>
+      <td>Residential</td>
+      <td>Wed May 21 00:00:00 EDT 2008</td>
+      <td>68212</td>
+      <td>38.478902</td>
+      <td>-121.431028</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2796 BRANCH ST</td>
+      <td>SACRAMENTO</td>
+      <td>95815</td>
+      <td>CA</td>
+      <td>2</td>
+      <td>1</td>
+      <td>796</td>
+      <td>Residential</td>
+      <td>Wed May 21 00:00:00 EDT 2008</td>
+      <td>68880</td>
+      <td>38.618305</td>
+      <td>-121.443839</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>2805 JANETTE WAY</td>
+      <td>SACRAMENTO</td>
+      <td>95815</td>
+      <td>CA</td>
+      <td>2</td>
+      <td>1</td>
+      <td>852</td>
+      <td>Residential</td>
+      <td>Wed May 21 00:00:00 EDT 2008</td>
+      <td>69307</td>
+      <td>38.616835</td>
+      <td>-121.439146</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>6001 MCMAHON DR</td>
+      <td>SACRAMENTO</td>
+      <td>95824</td>
+      <td>CA</td>
+      <td>2</td>
+      <td>1</td>
+      <td>797</td>
+      <td>Residential</td>
+      <td>Wed May 21 00:00:00 EDT 2008</td>
+      <td>81900</td>
+      <td>38.519470</td>
+      <td>-121.435768</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div class="highlight"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
+
+<span class="c1"># Now let’s quickly see the names and types of the columns. </span>
+<span class="c1"># Most of the time you’re going get data that is not quite what you expected, </span>
+<span class="c1"># such as dates which are actually strings and other oddities. But to check upfront.</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="k">class</span> <span class="s1">&#39;pandas.core.frame.DataFrame&#39;</span><span class="o">&gt;</span>
+<span class="n">RangeIndex</span><span class="p">:</span> <span class="mi">985</span> <span class="n">entries</span><span class="p">,</span> <span class="mi">0</span> <span class="k">to</span> <span class="mi">984</span>
+<span class="k">Data</span> <span class="n">columns</span> <span class="p">(</span><span class="n">total</span> <span class="mi">12</span> <span class="n">columns</span><span class="p">):</span>
+<span class="n">street</span>       <span class="mi">985</span> <span class="n">non</span><span class="o">-</span><span class="k">null</span> <span class="k">object</span>
+<span class="n">city</span>         <span class="mi">985</span> <span class="n">non</span><span class="o">-</span><span class="k">null</span> <span class="k">object</span>
+<span class="n">zip</span>          <span class="mi">985</span> <span class="n">non</span><span class="o">-</span><span class="k">null</span> <span class="n">int64</span>
+<span class="k">state</span>        <span class="mi">985</span> <span class="n">non</span><span class="o">-</span><span class="k">null</span> <span class="k">object</span>
+<span class="n">beds</span>         <span class="mi">985</span> <span class="n">non</span><span class="o">-</span><span class="k">null</span> <span class="n">int64</span>
+<span class="n">baths</span>        <span class="mi">985</span> <span class="n">non</span><span class="o">-</span><span class="k">null</span> <span class="n">int64</span>
+<span class="n">sq__ft</span>       <span class="mi">985</span> <span class="n">non</span><span class="o">-</span><span class="k">null</span> <span class="n">int64</span>
+<span class="k">type</span>         <span class="mi">985</span> <span class="n">non</span><span class="o">-</span><span class="k">null</span> <span class="k">object</span>
+<span class="n">sale_date</span>    <span class="mi">985</span> <span class="n">non</span><span class="o">-</span><span class="k">null</span> <span class="k">object</span>
+<span class="n">price</span>        <span class="mi">985</span> <span class="n">non</span><span class="o">-</span><span class="k">null</span> <span class="n">int64</span>
+<span class="n">latitude</span>     <span class="mi">985</span> <span class="n">non</span><span class="o">-</span><span class="k">null</span> <span class="n">float64</span>
+<span class="n">longitude</span>    <span class="mi">985</span> <span class="n">non</span><span class="o">-</span><span class="k">null</span> <span class="n">float64</span>
+<span class="n">dtypes</span><span class="p">:</span> <span class="n">float64</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">int64</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="k">object</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">memory</span> <span class="k">usage</span><span class="p">:</span> <span class="mi">92</span><span class="p">.</span><span class="mi">4</span><span class="o">+</span> <span class="n">KB</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
+
+<span class="c1"># We find that &#39;Sq_ft&#39; and &#39;price&#39; have negative values</span>
+</pre></div>
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>zip</th>
+      <th>beds</th>
+      <th>baths</th>
+      <th>sq__ft</th>
+      <th>price</th>
+      <th>latitude</th>
+      <th>longitude</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>count</th>
+      <td>985.000000</td>
+      <td>985.000000</td>
+      <td>985.000000</td>
+      <td>985.000000</td>
+      <td>985.000000</td>
+      <td>985.000000</td>
+      <td>985.000000</td>
+    </tr>
+    <tr>
+      <th>mean</th>
+      <td>95750.697462</td>
+      <td>2.911675</td>
+      <td>1.776650</td>
+      <td>1312.918782</td>
+      <td>233715.951269</td>
+      <td>38.445121</td>
+      <td>-121.193371</td>
+    </tr>
+    <tr>
+      <th>std</th>
+      <td>85.176072</td>
+      <td>1.307932</td>
+      <td>0.895371</td>
+      <td>856.123224</td>
+      <td>139088.818896</td>
+      <td>5.103637</td>
+      <td>5.100670</td>
+    </tr>
+    <tr>
+      <th>min</th>
+      <td>95603.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>-984.000000</td>
+      <td>-210944.000000</td>
+      <td>-121.503471</td>
+      <td>-121.551704</td>
+    </tr>
+    <tr>
+      <th>25%</th>
+      <td>95660.000000</td>
+      <td>2.000000</td>
+      <td>1.000000</td>
+      <td>950.000000</td>
+      <td>145000.000000</td>
+      <td>38.482704</td>
+      <td>-121.446119</td>
+    </tr>
+    <tr>
+      <th>50%</th>
+      <td>95762.000000</td>
+      <td>3.000000</td>
+      <td>2.000000</td>
+      <td>1304.000000</td>
+      <td>213750.000000</td>
+      <td>38.625932</td>
+      <td>-121.375799</td>
+    </tr>
+    <tr>
+      <th>75%</th>
+      <td>95828.000000</td>
+      <td>4.000000</td>
+      <td>2.000000</td>
+      <td>1718.000000</td>
+      <td>300000.000000</td>
+      <td>38.695589</td>
+      <td>-121.294893</td>
+    </tr>
+    <tr>
+      <th>max</th>
+      <td>95864.000000</td>
+      <td>8.000000</td>
+      <td>5.000000</td>
+      <td>5822.000000</td>
+      <td>884790.000000</td>
+      <td>39.020808</td>
+      <td>38.668433</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div class="highlight"><pre><span></span><span class="c1"># Fixing &#39;Sq_ft&#39; and &#39;price&#39; error for negative values</span>
+
+<span class="n">df</span><span class="p">[</span><span class="s1">&#39;sq_ft&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;sq_ft&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span>
+
+<span class="n">df</span><span class="p">[</span><span class="s1">&#39;price&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;price&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
+</pre></div>
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>zip</th>
+      <th>beds</th>
+      <th>baths</th>
+      <th>sq_ft</th>
+      <th>price</th>
+      <th>latitude</th>
+      <th>longitude</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>count</th>
+      <td>856.000000</td>
+      <td>856.000000</td>
+      <td>856.000000</td>
+      <td>856.000000</td>
+      <td>856.000000</td>
+      <td>856.000000</td>
+      <td>856.000000</td>
+    </tr>
+    <tr>
+      <th>mean</th>
+      <td>95760.724299</td>
+      <td>3.250584</td>
+      <td>1.970794</td>
+      <td>1563.936916</td>
+      <td>235703.594626</td>
+      <td>38.577637</td>
+      <td>-121.376434</td>
+    </tr>
+    <tr>
+      <th>std</th>
+      <td>84.797598</td>
+      <td>0.838754</td>
+      <td>0.656296</td>
+      <td>665.196789</td>
+      <td>123388.840495</td>
+      <td>0.126175</td>
+      <td>0.127338</td>
+    </tr>
+    <tr>
+      <th>min</th>
+      <td>95603.000000</td>
+      <td>1.000000</td>
+      <td>1.000000</td>
+      <td>0.000000</td>
+      <td>2000.000000</td>
+      <td>38.241514</td>
+      <td>-121.551704</td>
+    </tr>
+    <tr>
+      <th>25%</th>
+      <td>95670.000000</td>
+      <td>3.000000</td>
+      <td>2.000000</td>
+      <td>1126.750000</td>
+      <td>150000.000000</td>
+      <td>38.474665</td>
+      <td>-121.451965</td>
+    </tr>
+    <tr>
+      <th>50%</th>
+      <td>95819.000000</td>
+      <td>3.000000</td>
+      <td>2.000000</td>
+      <td>1388.000000</td>
+      <td>213723.500000</td>
+      <td>38.593323</td>
+      <td>-121.404230</td>
+    </tr>
+    <tr>
+      <th>75%</th>
+      <td>95829.000000</td>
+      <td>4.000000</td>
+      <td>2.000000</td>
+      <td>1810.250000</td>
+      <td>294000.000000</td>
+      <td>38.676205</td>
+      <td>-121.327518</td>
+    </tr>
+    <tr>
+      <th>max</th>
+      <td>95864.000000</td>
+      <td>8.000000</td>
+      <td>5.000000</td>
+      <td>5822.000000</td>
+      <td>884790.000000</td>
+      <td>39.008159</td>
+      <td>-120.597599</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<p>We also need to check if there is any empty values</p>
+<div class="highlight"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">empty</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="k">False</span>
+</pre></div>
+
+
+<p>We also need to check unique values for each columns. Thus, we can detect any errors and fix them.</p>
+<div class="highlight"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;city&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="nb">array</span><span class="p">([</span><span class="s1">&#39;SACRAMENTO&#39;</span><span class="p">,</span> <span class="s1">&#39;RANCHO CORDOVA&#39;</span><span class="p">,</span> <span class="s1">&#39;RIO LINDA&#39;</span><span class="p">,</span> <span class="s1">&#39;CITRUS HEIGHTS&#39;</span><span class="p">,</span>
+       <span class="s1">&#39;NORTH HIGHLANDS&#39;</span><span class="p">,</span> <span class="s1">&#39;ANTELOPE&#39;</span><span class="p">,</span> <span class="s1">&#39;ELK GROVE&#39;</span><span class="p">,</span> <span class="s1">&#39;ELVERTA&#39;</span><span class="p">,</span> <span class="s1">&#39;GALT&#39;</span><span class="p">,</span>
+       <span class="s1">&#39;CARMICHAEL&#39;</span><span class="p">,</span> <span class="s1">&#39;ORANGEVALE&#39;</span><span class="p">,</span> <span class="s1">&#39;FOLSOM&#39;</span><span class="p">,</span> <span class="s1">&#39;MATHER&#39;</span><span class="p">,</span> <span class="s1">&#39;POLLOCK PINES&#39;</span><span class="p">,</span>
+       <span class="s1">&#39;GOLD RIVER&#39;</span><span class="p">,</span> <span class="s1">&#39;EL DORADO HILLS&#39;</span><span class="p">,</span> <span class="s1">&#39;RANCHO MURIETA&#39;</span><span class="p">,</span> <span class="s1">&#39;WILTON&#39;</span><span class="p">,</span>
+       <span class="s1">&#39;GREENWOOD&#39;</span><span class="p">,</span> <span class="s1">&#39;FAIR OAKS&#39;</span><span class="p">,</span> <span class="s1">&#39;CAMERON PARK&#39;</span><span class="p">,</span> <span class="s1">&#39;LINCOLN&#39;</span><span class="p">,</span> <span class="s1">&#39;PLACERVILLE&#39;</span><span class="p">,</span>
+       <span class="s1">&#39;MEADOW VISTA&#39;</span><span class="p">,</span> <span class="s1">&#39;ROSEVILLE&#39;</span><span class="p">,</span> <span class="s1">&#39;ROCKLIN&#39;</span><span class="p">,</span> <span class="s1">&#39;AUBURN&#39;</span><span class="p">,</span> <span class="s1">&#39;LOOMIS&#39;</span><span class="p">,</span>
+       <span class="s1">&#39;EL DORADO&#39;</span><span class="p">,</span> <span class="s1">&#39;PENRYN&#39;</span><span class="p">,</span> <span class="s1">&#39;GRANITE BAY&#39;</span><span class="p">,</span> <span class="s1">&#39;FORESTHILL&#39;</span><span class="p">,</span>
+       <span class="s1">&#39;DIAMOND SPRINGS&#39;</span><span class="p">,</span> <span class="s1">&#39;SHINGLE SPRINGS&#39;</span><span class="p">,</span> <span class="s1">&#39;COOL&#39;</span><span class="p">,</span> <span class="s1">&#39;WALNUT GROVE&#39;</span><span class="p">,</span>
+       <span class="s1">&#39;GARDEN VALLEY&#39;</span><span class="p">,</span> <span class="s1">&#39;SLOUGHHOUSE&#39;</span><span class="p">,</span> <span class="s1">&#39;WEST SACRAMENTO&#39;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="k">object</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+
+<span class="c1">#There is no state which has postal code abbreviation &quot;AC&quot;</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="nb">array</span><span class="p">([</span><span class="s1">&#39;CA&#39;</span><span class="p">,</span> <span class="s1">&#39;AC&#39;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="k">object</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;beds&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="nb">array</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">int64</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+
+<span class="c1"># Typo &quot;Unkown&quot;</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="nb">array</span><span class="p">([</span><span class="s1">&#39;Residential&#39;</span><span class="p">,</span> <span class="s1">&#39;Condo&#39;</span><span class="p">,</span> <span class="s1">&#39;Multi-Family&#39;</span><span class="p">,</span> <span class="s1">&#39;Unkown&#39;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="k">object</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="c1"># Fixing typo </span>
+
+<span class="n">df</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;Unkown&#39;</span><span class="p">,</span> <span class="s1">&#39;Unknown&#39;</span><span class="p">,</span><span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="nb">array</span><span class="p">([</span><span class="s1">&#39;Residential&#39;</span><span class="p">,</span> <span class="s1">&#39;Condo&#39;</span><span class="p">,</span> <span class="s1">&#39;Multi-Family&#39;</span><span class="p">,</span> <span class="s1">&#39;Unknown&#39;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="k">object</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;baths&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="nb">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">int64</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="c1"># Fixing state typo</span>
+
+<span class="n">df</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;AC&#39;</span><span class="p">,</span> <span class="s1">&#39;CA&#39;</span><span class="p">,</span><span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="c1">#Checking if error was fixed</span>
+
+<span class="n">df</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="nb">array</span><span class="p">([</span><span class="s1">&#39;CA&#39;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="k">object</span><span class="p">)</span>
+</pre></div>
+
+
+<p>Just an extra step to make the column's name look nicer</p>
+<div class="highlight"><pre><span></span><span class="c1"># sq__ft should only have one &#39;_&#39;</span>
+
+<span class="n">df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;sq__ft&#39;</span><span class="p">:</span><span class="s1">&#39;sq_ft&#39;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>street</th>
+      <th>city</th>
+      <th>zip</th>
+      <th>state</th>
+      <th>beds</th>
+      <th>baths</th>
+      <th>sq_ft</th>
+      <th>type</th>
+      <th>sale_date</th>
+      <th>price</th>
+      <th>latitude</th>
+      <th>longitude</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>3526 HIGH ST</td>
+      <td>SACRAMENTO</td>
+      <td>95838</td>
+      <td>CA</td>
+      <td>2</td>
+      <td>1</td>
+      <td>836</td>
+      <td>Residential</td>
+      <td>Wed May 21 00:00:00 EDT 2008</td>
+      <td>59222</td>
+      <td>38.631913</td>
+      <td>-121.434879</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>51 OMAHA CT</td>
+      <td>SACRAMENTO</td>
+      <td>95823</td>
+      <td>CA</td>
+      <td>3</td>
+      <td>1</td>
+      <td>1167</td>
+      <td>Residential</td>
+      <td>Wed May 21 00:00:00 EDT 2008</td>
+      <td>68212</td>
+      <td>38.478902</td>
+      <td>-121.431028</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2796 BRANCH ST</td>
+      <td>SACRAMENTO</td>
+      <td>95815</td>
+      <td>CA</td>
+      <td>2</td>
+      <td>1</td>
+      <td>796</td>
+      <td>Residential</td>
+      <td>Wed May 21 00:00:00 EDT 2008</td>
+      <td>68880</td>
+      <td>38.618305</td>
+      <td>-121.443839</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<p>Ahha, checking duplicate rows is also needed</p>
+<div class="highlight"><pre><span></span><span class="n">duplicate</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">street</span><span class="o">.</span><span class="n">duplicated</span><span class="p">(</span><span class="n">keep</span><span class="o">=</span><span class="bp">False</span><span class="p">)]</span>
+
+<span class="c1"># duplicate = df.loc[duplicate_bool == True]</span>
+
+<span class="n">duplicate</span>
+</pre></div>
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>street</th>
+      <th>city</th>
+      <th>zip</th>
+      <th>state</th>
+      <th>beds</th>
+      <th>baths</th>
+      <th>sq_ft</th>
+      <th>type</th>
+      <th>sale_date</th>
+      <th>price</th>
+      <th>latitude</th>
+      <th>longitude</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>393</th>
+      <td>1223 LAMBERTON CIR</td>
+      <td>SACRAMENTO</td>
+      <td>95838</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>2.0</td>
+      <td>1370.0</td>
+      <td>Residential</td>
+      <td>Mon May 19 00:00:00 EDT 2008</td>
+      <td>155435</td>
+      <td>38.646677</td>
+      <td>-121.437573</td>
+    </tr>
+    <tr>
+      <th>394</th>
+      <td>1223 LAMBERTON CIR</td>
+      <td>SACRAMENTO</td>
+      <td>95838</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>2.0</td>
+      <td>1370.0</td>
+      <td>Residential</td>
+      <td>Mon May 19 00:00:00 EDT 2008</td>
+      <td>155500</td>
+      <td>38.646677</td>
+      <td>-121.437573</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div class="highlight"><pre><span></span><span class="c1"># Fixing duplicate rows</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="n">keep</span><span class="o">=</span><span class="s1">&#39;first&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">duplicated</span><span class="p">()]</span>
+</pre></div>
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>street</th>
+      <th>city</th>
+      <th>zip</th>
+      <th>state</th>
+      <th>beds</th>
+      <th>baths</th>
+      <th>sq_ft</th>
+      <th>type</th>
+      <th>sale_date</th>
+      <th>price</th>
+      <th>latitude</th>
+      <th>longitude</th>
+    </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
+</div>
+
+<h6>Sometimes, we have to explore the data set in order to understand every single value in cells</h6>
+<div class="highlight"><pre><span></span><span class="c1"># latitude range [-90, 90]</span>
+<span class="c1"># Longtitude range [-180, 180]</span>
+
+<span class="c1"># df[&#39;latitude&#39;] is not correct</span>
+
+<span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;latitude&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;latitude&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()]</span>
+</pre></div>
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>street</th>
+      <th>city</th>
+      <th>zip</th>
+      <th>state</th>
+      <th>beds</th>
+      <th>baths</th>
+      <th>sq_ft</th>
+      <th>type</th>
+      <th>sale_date</th>
+      <th>price</th>
+      <th>latitude</th>
+      <th>longitude</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>174</th>
+      <td>1121 CREEKSIDE WAY</td>
+      <td>GALT</td>
+      <td>95632</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>1.0</td>
+      <td>1080.0</td>
+      <td>Residential</td>
+      <td>Tue May 20 00:00:00 EDT 2008</td>
+      <td>106716</td>
+      <td>38.241514</td>
+      <td>-121.312199</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div class="highlight"><pre><span></span><span class="c1">#Switching values </span>
+
+<span class="n">lat</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">703</span><span class="p">,</span><span class="s1">&#39;longitude&#39;</span><span class="p">]</span>
+<span class="nb">long</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">703</span><span class="p">,</span> <span class="s1">&#39;latitude&#39;</span><span class="p">]</span>
+
+<span class="n">df</span><span class="p">[</span><span class="s1">&#39;latitude&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">703</span><span class="p">,</span><span class="s1">&#39;latitude&#39;</span><span class="p">],</span> <span class="n">lat</span><span class="p">,</span><span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">&#39;longitude&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">703</span><span class="p">,</span><span class="s1">&#39;longitude&#39;</span><span class="p">],</span> <span class="nb">long</span><span class="p">,</span><span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</pre></div>
+
+
+<p>We always deal with NaN values, but we also have to be aware of zero values which may affect our data. For missing values, if you need to fill in errors or blanks, use the fillna() and dropna() methods. You could just drop them from the dataframe entirely, either by the row or by the column, but you have to keep in mind, do not delete over 5% of dataset.</p>
+<p>You could fill the NaNs with strings, or if they are numbers you could use imputation methods which use the mean or the median value. In this case, we will treat zero values as NaN values.</p>
+<div class="highlight"><pre><span></span><span class="c1">#Cleaning data with sq_ft = 0</span>
+
+<span class="n">zero</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;sq_ft&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">]</span>
+<span class="n">zero</span>
+</pre></div>
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>street</th>
+      <th>city</th>
+      <th>zip</th>
+      <th>state</th>
+      <th>beds</th>
+      <th>baths</th>
+      <th>sq_ft</th>
+      <th>type</th>
+      <th>sale_date</th>
+      <th>price</th>
+      <th>latitude</th>
+      <th>longitude</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>325</th>
+      <td>1740 HIGH ST</td>
+      <td>AUBURN</td>
+      <td>95603</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>3.0</td>
+      <td>0.0</td>
+      <td>Residential</td>
+      <td>Tue May 20 00:00:00 EDT 2008</td>
+      <td>504000</td>
+      <td>38.891935</td>
+      <td>-121.084340</td>
+    </tr>
+    <tr>
+      <th>852</th>
+      <td>820 DANA CT</td>
+      <td>AUBURN</td>
+      <td>95603</td>
+      <td>CA</td>
+      <td>4.0</td>
+      <td>3.0</td>
+      <td>0.0</td>
+      <td>Residential</td>
+      <td>Fri May 16 00:00:00 EDT 2008</td>
+      <td>560000</td>
+      <td>38.865246</td>
+      <td>-121.094869</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div class="highlight"><pre><span></span><span class="n">zero</span><span class="p">[</span><span class="s1">&#39;city&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="nb">array</span><span class="p">([</span><span class="s1">&#39;AUBURN&#39;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="k">object</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="n">nan</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;city&#39;</span><span class="p">)[</span><span class="s1">&#39;sq_ft&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">median</span><span class="p">()</span><span class="o">.</span><span class="n">to_frame</span><span class="p">()</span>
+<span class="n">nan</span>
+</pre></div>
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>sq_ft</th>
+    </tr>
+    <tr>
+      <th>city</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>ANTELOPE</th>
+      <td>1669.0</td>
+    </tr>
+    <tr>
+      <th>AUBURN</th>
+      <td>960.0</td>
+    </tr>
+    <tr>
+      <th>CAMERON PARK</th>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>CARMICHAEL</th>
+      <td>1472.5</td>
+    </tr>
+    <tr>
+      <th>CITRUS HEIGHTS</th>
+      <td>1292.5</td>
+    </tr>
+    <tr>
+      <th>COOL</th>
+      <td>1457.0</td>
+    </tr>
+    <tr>
+      <th>DIAMOND SPRINGS</th>
+      <td>1300.0</td>
+    </tr>
+    <tr>
+      <th>EL DORADO</th>
+      <td>1332.0</td>
+    </tr>
+    <tr>
+      <th>EL DORADO HILLS</th>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>ELK GROVE</th>
+      <td>1722.5</td>
+    </tr>
+    <tr>
+      <th>ELVERTA</th>
+      <td>1235.0</td>
+    </tr>
+    <tr>
+      <th>FAIR OAKS</th>
+      <td>1450.0</td>
+    </tr>
+    <tr>
+      <th>FOLSOM</th>
+      <td>1939.0</td>
+    </tr>
+    <tr>
+      <th>FORESTHILL</th>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>GALT</th>
+      <td>1479.0</td>
+    </tr>
+    <tr>
+      <th>GARDEN VALLEY</th>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>GOLD RIVER</th>
+      <td>1750.5</td>
+    </tr>
+    <tr>
+      <th>GRANITE BAY</th>
+      <td>2896.0</td>
+    </tr>
+    <tr>
+      <th>GREENWOOD</th>
+      <td>2846.0</td>
+    </tr>
+    <tr>
+      <th>LINCOLN</th>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>LOOMIS</th>
+      <td>1476.0</td>
+    </tr>
+    <tr>
+      <th>MATHER</th>
+      <td>2093.0</td>
+    </tr>
+    <tr>
+      <th>MEADOW VISTA</th>
+      <td>1216.0</td>
+    </tr>
+    <tr>
+      <th>NORTH HIGHLANDS</th>
+      <td>1152.0</td>
+    </tr>
+    <tr>
+      <th>ORANGEVALE</th>
+      <td>1574.0</td>
+    </tr>
+    <tr>
+      <th>PENRYN</th>
+      <td>1320.0</td>
+    </tr>
+    <tr>
+      <th>PLACERVILLE</th>
+      <td>474.0</td>
+    </tr>
+    <tr>
+      <th>POLLOCK PINES</th>
+      <td>1320.0</td>
+    </tr>
+    <tr>
+      <th>RANCHO CORDOVA</th>
+      <td>1222.0</td>
+    </tr>
+    <tr>
+      <th>RANCHO MURIETA</th>
+      <td>2734.0</td>
+    </tr>
+    <tr>
+      <th>RIO LINDA</th>
+      <td>1182.0</td>
+    </tr>
+    <tr>
+      <th>ROCKLIN</th>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>ROSEVILLE</th>
+      <td>1049.0</td>
+    </tr>
+    <tr>
+      <th>SACRAMENTO</th>
+      <td>1318.0</td>
+    </tr>
+    <tr>
+      <th>SHINGLE SPRINGS</th>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>SLOUGHHOUSE</th>
+      <td>5822.0</td>
+    </tr>
+    <tr>
+      <th>WALNUT GROVE</th>
+      <td>1727.0</td>
+    </tr>
+    <tr>
+      <th>WEST SACRAMENTO</th>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>WILTON</th>
+      <td>3741.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div class="highlight"><pre><span></span><span class="c1"># Deleting extra rows</span>
+
+<span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span> <span class="n">df</span><span class="p">[</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;city&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;FORESTHILL&#39;</span> <span class="p">]</span><span class="o">.</span><span class="n">index</span> <span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span> <span class="n">df</span><span class="p">[</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;city&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;CAMERON PARK&#39;</span> <span class="p">]</span><span class="o">.</span><span class="n">index</span> <span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span> <span class="n">df</span><span class="p">[</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;city&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;EL DORADO HILLS&#39;</span> <span class="p">]</span><span class="o">.</span><span class="n">index</span> <span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span> <span class="n">df</span><span class="p">[</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;city&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;GARDEN VALLEY&#39;</span> <span class="p">]</span><span class="o">.</span><span class="n">index</span> <span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span> <span class="n">df</span><span class="p">[</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;city&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;LINCOLN&#39;</span> <span class="p">]</span><span class="o">.</span><span class="n">index</span> <span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span> <span class="n">df</span><span class="p">[</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;city&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;ROCKLIN&#39;</span> <span class="p">]</span><span class="o">.</span><span class="n">index</span> <span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span> <span class="n">df</span><span class="p">[</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;city&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;SHINGLE SPRINGS&#39;</span> <span class="p">]</span><span class="o">.</span><span class="n">index</span> <span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span> <span class="n">df</span><span class="p">[</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;city&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;WEST SACRAMENTO&#39;</span> <span class="p">]</span><span class="o">.</span><span class="n">index</span> <span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="c1"># Replaceing median value to sq_ft with value &#39;0&#39;</span>
+
+<span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df</span><span class="o">.</span><span class="n">city</span> <span class="o">==</span> <span class="s1">&#39;SACRAMENTO&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">sq_ft</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">,</span> <span class="s1">&#39;sq_ft&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nan</span><span class="p">[</span><span class="s1">&#39;sq_ft&#39;</span><span class="p">][</span><span class="mi">33</span><span class="p">]</span>
+
+<span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df</span><span class="o">.</span><span class="n">city</span> <span class="o">==</span> <span class="s1">&#39;RANCHO CORDOVA&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">sq_ft</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">,</span> <span class="s1">&#39;sq_ft&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nan</span><span class="p">[</span><span class="s1">&#39;sq_ft&#39;</span><span class="p">][</span><span class="mi">28</span><span class="p">]</span>
+
+<span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df</span><span class="o">.</span><span class="n">city</span> <span class="o">==</span> <span class="s1">&#39;ELK GROVE&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">sq_ft</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">,</span> <span class="s1">&#39;sq_ft&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nan</span><span class="p">[</span><span class="s1">&#39;sq_ft&#39;</span><span class="p">][</span><span class="mi">9</span><span class="p">]</span>
+
+<span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df</span><span class="o">.</span><span class="n">city</span> <span class="o">==</span> <span class="s1">&#39;FOLSOM&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">sq_ft</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">,</span> <span class="s1">&#39;sq_ft&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nan</span><span class="p">[</span><span class="s1">&#39;sq_ft&#39;</span><span class="p">][</span><span class="mi">12</span><span class="p">]</span>
+
+<span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df</span><span class="o">.</span><span class="n">city</span> <span class="o">==</span> <span class="s1">&#39;RANCHO MURIETA&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">sq_ft</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">,</span> <span class="s1">&#39;sq_ft&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nan</span><span class="p">[</span><span class="s1">&#39;sq_ft&#39;</span><span class="p">][</span><span class="mi">29</span><span class="p">]</span>
+
+<span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df</span><span class="o">.</span><span class="n">city</span> <span class="o">==</span> <span class="s1">&#39;GOLD RIVER&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">sq_ft</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">,</span> <span class="s1">&#39;sq_ft&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nan</span><span class="p">[</span><span class="s1">&#39;sq_ft&#39;</span><span class="p">][</span><span class="mi">16</span><span class="p">]</span>
+
+<span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df</span><span class="o">.</span><span class="n">city</span> <span class="o">==</span> <span class="s1">&#39;ROSEVILLE&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">sq_ft</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">,</span> <span class="s1">&#39;sq_ft&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nan</span><span class="p">[</span><span class="s1">&#39;sq_ft&#39;</span><span class="p">][</span><span class="mi">32</span><span class="p">]</span>
+
+<span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df</span><span class="o">.</span><span class="n">city</span> <span class="o">==</span> <span class="s1">&#39;WILTON&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">sq_ft</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">,</span> <span class="s1">&#39;sq_ft&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nan</span><span class="p">[</span><span class="s1">&#39;sq_ft&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+<span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df</span><span class="o">.</span><span class="n">city</span> <span class="o">==</span> <span class="s1">&#39;RIO LINDA&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">sq_ft</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">,</span> <span class="s1">&#39;sq_ft&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nan</span><span class="p">[</span><span class="s1">&#39;sq_ft&#39;</span><span class="p">][</span><span class="mi">30</span><span class="p">]</span>
+
+<span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df</span><span class="o">.</span><span class="n">city</span> <span class="o">==</span> <span class="s1">&#39;PLACERVILLE&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">sq_ft</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">,</span> <span class="s1">&#39;sq_ft&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nan</span><span class="p">[</span><span class="s1">&#39;sq_ft&#39;</span><span class="p">][</span><span class="mi">26</span><span class="p">]</span>
+
+<span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df</span><span class="o">.</span><span class="n">city</span> <span class="o">==</span> <span class="s1">&#39;GALT&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">sq_ft</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">,</span> <span class="s1">&#39;sq_ft&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nan</span><span class="p">[</span><span class="s1">&#39;sq_ft&#39;</span><span class="p">][</span><span class="mi">14</span><span class="p">]</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="c1"># Replaceing median value to beds with value &#39;0&#39;</span>
+
+<span class="n">one</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;beds&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">]</span>
+<span class="n">one</span>
+</pre></div>
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>street</th>
+      <th>city</th>
+      <th>zip</th>
+      <th>state</th>
+      <th>beds</th>
+      <th>baths</th>
+      <th>sq_ft</th>
+      <th>type</th>
+      <th>sale_date</th>
+      <th>price</th>
+      <th>latitude</th>
+      <th>longitude</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>73</th>
+      <td>17 SERASPI CT</td>
+      <td>SACRAMENTO</td>
+      <td>95834</td>
+      <td>CA</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1318.0</td>
+      <td>Residential</td>
+      <td>Wed May 21 00:00:00 EDT 2008</td>
+      <td>206000</td>
+      <td>38.631481</td>
+      <td>-121.501880</td>
+    </tr>
+    <tr>
+      <th>89</th>
+      <td>2866 KARITSA AVE</td>
+      <td>SACRAMENTO</td>
+      <td>95833</td>
+      <td>CA</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1318.0</td>
+      <td>Residential</td>
+      <td>Wed May 21 00:00:00 EDT 2008</td>
+      <td>244500</td>
+      <td>38.626671</td>
+      <td>-121.525970</td>
+    </tr>
+    <tr>
+      <th>100</th>
+      <td>12209 CONSERVANCY WAY</td>
+      <td>RANCHO CORDOVA</td>
+      <td>95742</td>
+      <td>CA</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1222.0</td>
+      <td>Residential</td>
+      <td>Wed May 21 00:00:00 EDT 2008</td>
+      <td>263500</td>
+      <td>38.553867</td>
+      <td>-121.219141</td>
+    </tr>
+    <tr>
+      <th>121</th>
+      <td>5337 DUSTY ROSE WAY</td>
+      <td>RANCHO CORDOVA</td>
+      <td>95742</td>
+      <td>CA</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1222.0</td>
+      <td>Residential</td>
+      <td>Wed May 21 00:00:00 EDT 2008</td>
+      <td>320000</td>
+      <td>38.528575</td>
+      <td>-121.228600</td>
+    </tr>
+    <tr>
+      <th>126</th>
+      <td>2115 SMOKESTACK WAY</td>
+      <td>SACRAMENTO</td>
+      <td>95833</td>
+      <td>CA</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1318.0</td>
+      <td>Residential</td>
+      <td>Wed May 21 00:00:00 EDT 2008</td>
+      <td>339500</td>
+      <td>38.602416</td>
+      <td>-121.542965</td>
+    </tr>
+    <tr>
+      <th>133</th>
+      <td>8082 LINDA ISLE LN</td>
+      <td>SACRAMENTO</td>
+      <td>95831</td>
+      <td>CA</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1318.0</td>
+      <td>Residential</td>
+      <td>Wed May 21 00:00:00 EDT 2008</td>
+      <td>370000</td>
+      <td>38.477200</td>
+      <td>-121.521500</td>
+    </tr>
+    <tr>
+      <th>147</th>
+      <td>9278 DAIRY CT</td>
+      <td>ELK GROVE</td>
+      <td>95624</td>
+      <td>CA</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1722.5</td>
+      <td>Residential</td>
+      <td>Wed May 21 00:00:00 EDT 2008</td>
+      <td>445000</td>
+      <td>38.420338</td>
+      <td>-121.363757</td>
+    </tr>
+    <tr>
+      <th>153</th>
+      <td>868 HILDEBRAND CIR</td>
+      <td>FOLSOM</td>
+      <td>95630</td>
+      <td>CA</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1939.0</td>
+      <td>Residential</td>
+      <td>Wed May 21 00:00:00 EDT 2008</td>
+      <td>585000</td>
+      <td>38.670947</td>
+      <td>-121.097727</td>
+    </tr>
+    <tr>
+      <th>169</th>
+      <td>14788 NATCHEZ CT</td>
+      <td>RANCHO MURIETA</td>
+      <td>95683</td>
+      <td>CA</td>
+      <td>0</td>
+      <td>0</td>
+      <td>2734.0</td>
+      <td>Residential</td>
+      <td>Tue May 20 00:00:00 EDT 2008</td>
+      <td>97750</td>
+      <td>38.492287</td>
+      <td>-121.100032</td>
+    </tr>
+    <tr>
+      <th>192</th>
+      <td>5201 LAGUNA OAKS DR Unit 126</td>
+      <td>ELK GROVE</td>
+      <td>95758</td>
+      <td>CA</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1722.5</td>
+      <td>Condo</td>
+      <td>Tue May 20 00:00:00 EDT 2008</td>
+      <td>145000</td>
+      <td>38.423251</td>
+      <td>-121.444489</td>
+    </tr>
+    <tr>
+      <th>234</th>
+      <td>3139 SPOONWOOD WAY Unit 1</td>
+      <td>SACRAMENTO</td>
+      <td>95833</td>
+      <td>CA</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1318.0</td>
+      <td>Residential</td>
+      <td>Tue May 20 00:00:00 EDT 2008</td>
+      <td>215500</td>
+      <td>38.626582</td>
+      <td>-121.521510</td>
+    </tr>
+    <tr>
+      <th>236</th>
+      <td>2340 HURLEY WAY</td>
+      <td>SACRAMENTO</td>
+      <td>95825</td>
+      <td>CA</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1318.0</td>
+      <td>Condo</td>
+      <td>Tue May 20 00:00:00 EDT 2008</td>
+      <td>225000</td>
+      <td>38.588816</td>
+      <td>-121.408549</td>
+    </tr>
+    <tr>
+      <th>248</th>
+      <td>611 BLOSSOM ROCK LN</td>
+      <td>FOLSOM</td>
+      <td>95630</td>
+      <td>CA</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1939.0</td>
+      <td>Condo</td>
+      <td>Tue May 20 00:00:00 EDT 2008</td>
+      <td>240000</td>
+      <td>38.645700</td>
+      <td>-121.119700</td>
+    </tr>
+    <tr>
+      <th>249</th>
+      <td>8830 ADUR RD</td>
+      <td>ELK GROVE</td>
+      <td>95624</td>
+      <td>CA</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1722.5</td>
+      <td>Residential</td>
+      <td>Tue May 20 00:00:00 EDT 2008</td>
+      <td>242000</td>
+      <td>38.437420</td>
+      <td>-121.372876</td>
+    </tr>
+    <tr>
+      <th>253</th>
+      <td>221 PICASSO CIR</td>
+      <td>SACRAMENTO</td>
+      <td>95835</td>
+      <td>CA</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1318.0</td>
+      <td>Residential</td>
+      <td>Tue May 20 00:00:00 EDT 2008</td>
+      <td>250000</td>
+      <td>38.676658</td>
+      <td>-121.528128</td>
+    </tr>
+    <tr>
+      <th>265</th>
+      <td>230 BANKSIDE WAY</td>
+      <td>SACRAMENTO</td>
+      <td>95835</td>
+      <td>CA</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1318.0</td>
+      <td>Residential</td>
+      <td>Tue May 20 00:00:00 EDT 2008</td>
+      <td>270000</td>
+      <td>38.676937</td>
+      <td>-121.529244</td>
+    </tr>
+    <tr>
+      <th>268</th>
+      <td>4236 ADRIATIC SEA WAY</td>
+      <td>SACRAMENTO</td>
+      <td>95834</td>
+      <td>CA</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1318.0</td>
+      <td>Residential</td>
+      <td>Tue May 20 00:00:00 EDT 2008</td>
+      <td>270000</td>
+      <td>38.647961</td>
+      <td>-121.543162</td>
+    </tr>
+    <tr>
+      <th>279</th>
+      <td>11281 STANFORD COURT LN Unit 604</td>
+      <td>GOLD RIVER</td>
+      <td>95670</td>
+      <td>CA</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1750.5</td>
+      <td>Condo</td>
+      <td>Tue May 20 00:00:00 EDT 2008</td>
+      <td>300000</td>
+      <td>38.625289</td>
+      <td>-121.260286</td>
+    </tr>
+    <tr>
+      <th>285</th>
+      <td>3224 PARKHAM DR</td>
+      <td>ROSEVILLE</td>
+      <td>95747</td>
+      <td>CA</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1049.0</td>
+      <td>Residential</td>
+      <td>Tue May 20 00:00:00 EDT 2008</td>
+      <td>306500</td>
+      <td>38.772771</td>
+      <td>-121.364877</td>
+    </tr>
+    <tr>
+      <th>286</th>
+      <td>15 VANESSA PL</td>
+      <td>SACRAMENTO</td>
+      <td>95835</td>
+      <td>CA</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1318.0</td>
+      <td>Residential</td>
+      <td>Tue May 20 00:00:00 EDT 2008</td>
+      <td>312500</td>
+      <td>38.668692</td>
+      <td>-121.545490</td>
+    </tr>
+    <tr>
+      <th>308</th>
+      <td>5404 ALMOND FALLS WAY</td>
+      <td>RANCHO CORDOVA</td>
+      <td>95742</td>
+      <td>CA</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1222.0</td>
+      <td>Residential</td>
+      <td>Tue May 20 00:00:00 EDT 2008</td>
+      <td>425000</td>
+      <td>38.527502</td>
+      <td>-121.233492</td>
+    </tr>
+    <tr>
+      <th>310</th>
+      <td>14 CASA VATONI PL</td>
+      <td>SACRAMENTO</td>
+      <td>95834</td>
+      <td>CA</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1318.0</td>
+      <td>Residential</td>
+      <td>Tue May 20 00:00:00 EDT 2008</td>
+      <td>433500</td>
+      <td>38.650221</td>
+      <td>-121.551704</td>
+    </tr>
+    <tr>
+      <th>324</th>
+      <td>201 FIRESTONE DR</td>
+      <td>ROSEVILLE</td>
+      <td>95678</td>
+      <td>CA</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1049.0</td>
+      <td>Residential</td>
+      <td>Tue May 20 00:00:00 EDT 2008</td>
+      <td>500500</td>
+      <td>38.770153</td>
+      <td>-121.300039</td>
+    </tr>
+    <tr>
+      <th>327</th>
+      <td>9741 SADDLEBRED CT</td>
+      <td>WILTON</td>
+      <td>95693</td>
+      <td>CA</td>
+      <td>0</td>
+      <td>0</td>
+      <td>3741.0</td>
+      <td>Residential</td>
+      <td>Tue May 20 00:00:00 EDT 2008</td>
+      <td>560000</td>
+      <td>38.408841</td>
+      <td>-121.198039</td>
+    </tr>
+    <tr>
+      <th>469</th>
+      <td>8491 CRYSTAL WALK CIR</td>
+      <td>ELK GROVE</td>
+      <td>95758</td>
+      <td>CA</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1722.5</td>
+      <td>Residential</td>
+      <td>Mon May 19 00:00:00 EDT 2008</td>
+      <td>261000</td>
+      <td>38.416916</td>
+      <td>-121.407554</td>
+    </tr>
+    <tr>
+      <th>494</th>
+      <td>3072 VILLAGE PLAZA DR</td>
+      <td>ROSEVILLE</td>
+      <td>95747</td>
+      <td>CA</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1049.0</td>
+      <td>Residential</td>
+      <td>Mon May 19 00:00:00 EDT 2008</td>
+      <td>307000</td>
+      <td>38.773094</td>
+      <td>-121.365905</td>
+    </tr>
+    <tr>
+      <th>503</th>
+      <td>12241 CANYONLANDS DR</td>
+      <td>RANCHO CORDOVA</td>
+      <td>95742</td>
+      <td>CA</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1222.0</td>
+      <td>Residential</td>
+      <td>Mon May 19 00:00:00 EDT 2008</td>
+      <td>331500</td>
+      <td>38.557293</td>
+      <td>-121.217611</td>
+    </tr>
+    <tr>
+      <th>505</th>
+      <td>907 RIO ROBLES AVE</td>
+      <td>SACRAMENTO</td>
+      <td>95838</td>
+      <td>CA</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1318.0</td>
+      <td>Residential</td>
+      <td>Mon May 19 00:00:00 EDT 2008</td>
+      <td>344755</td>
+      <td>38.664765</td>
+      <td>-121.445006</td>
+    </tr>
+    <tr>
+      <th>509</th>
+      <td>1033 PARK STREAM DR</td>
+      <td>GALT</td>
+      <td>95632</td>
+      <td>CA</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1479.0</td>
+      <td>Residential</td>
+      <td>Mon May 19 00:00:00 EDT 2008</td>
+      <td>355000</td>
+      <td>38.287785</td>
+      <td>-121.289903</td>
+    </tr>
+    <tr>
+      <th>511</th>
+      <td>1322 SUTTER WALK</td>
+      <td>SACRAMENTO</td>
+      <td>95816</td>
+      <td>CA</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1318.0</td>
+      <td>Condo</td>
+      <td>Mon May 19 00:00:00 EDT 2008</td>
+      <td>360000</td>
+      <td>38.538050</td>
+      <td>-121.504700</td>
+    </tr>
+    <tr>
+      <th>516</th>
+      <td>1336 LAYSAN TEAL DR</td>
+      <td>ROSEVILLE</td>
+      <td>95747</td>
+      <td>CA</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1049.0</td>
+      <td>Residential</td>
+      <td>Mon May 19 00:00:00 EDT 2008</td>
+      <td>368500</td>
+      <td>38.796121</td>
+      <td>-121.319963</td>
+    </tr>
+    <tr>
+      <th>520</th>
+      <td>6313 CASTRO VERDE WAY</td>
+      <td>ELK GROVE</td>
+      <td>95757</td>
+      <td>CA</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1722.5</td>
+      <td>Residential</td>
+      <td>Mon May 19 00:00:00 EDT 2008</td>
+      <td>383000</td>
+      <td>38.381102</td>
+      <td>-121.429010</td>
+    </tr>
+    <tr>
+      <th>604</th>
+      <td>113 RINETTI WAY</td>
+      <td>RIO LINDA</td>
+      <td>95673</td>
+      <td>CA</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1182.0</td>
+      <td>Residential</td>
+      <td>Fri May 16 00:00:00 EDT 2008</td>
+      <td>30000</td>
+      <td>38.687172</td>
+      <td>-121.463933</td>
+    </tr>
+    <tr>
+      <th>718</th>
+      <td>9967 HATHERTON WAY</td>
+      <td>ELK GROVE</td>
+      <td>95757</td>
+      <td>CA</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1722.5</td>
+      <td>Residential</td>
+      <td>Fri May 16 00:00:00 EDT 2008</td>
+      <td>222500</td>
+      <td>38.305200</td>
+      <td>-121.403300</td>
+    </tr>
+    <tr>
+      <th>737</th>
+      <td>3569 SODA WAY</td>
+      <td>SACRAMENTO</td>
+      <td>95834</td>
+      <td>CA</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1318.0</td>
+      <td>Residential</td>
+      <td>Fri May 16 00:00:00 EDT 2008</td>
+      <td>247000</td>
+      <td>38.631139</td>
+      <td>-121.501879</td>
+    </tr>
+    <tr>
+      <th>754</th>
+      <td>6001 SHOO FLY RD</td>
+      <td>PLACERVILLE</td>
+      <td>95667</td>
+      <td>CA</td>
+      <td>0</td>
+      <td>0</td>
+      <td>474.0</td>
+      <td>Residential</td>
+      <td>Fri May 16 00:00:00 EDT 2008</td>
+      <td>270000</td>
+      <td>38.813546</td>
+      <td>-120.809254</td>
+    </tr>
+    <tr>
+      <th>755</th>
+      <td>3040 PARKHAM DR</td>
+      <td>ROSEVILLE</td>
+      <td>95747</td>
+      <td>CA</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1049.0</td>
+      <td>Residential</td>
+      <td>Fri May 16 00:00:00 EDT 2008</td>
+      <td>271000</td>
+      <td>38.770835</td>
+      <td>-121.366996</td>
+    </tr>
+    <tr>
+      <th>774</th>
+      <td>8253 KEEGAN WAY</td>
+      <td>ELK GROVE</td>
+      <td>95624</td>
+      <td>CA</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1722.5</td>
+      <td>Residential</td>
+      <td>Fri May 16 00:00:00 EDT 2008</td>
+      <td>298000</td>
+      <td>38.446286</td>
+      <td>-121.400817</td>
+    </tr>
+    <tr>
+      <th>789</th>
+      <td>5222 COPPER SUNSET WAY</td>
+      <td>RANCHO CORDOVA</td>
+      <td>95742</td>
+      <td>CA</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1222.0</td>
+      <td>Residential</td>
+      <td>Fri May 16 00:00:00 EDT 2008</td>
+      <td>313000</td>
+      <td>38.529181</td>
+      <td>-121.224755</td>
+    </tr>
+    <tr>
+      <th>798</th>
+      <td>3232 PARKHAM DR</td>
+      <td>ROSEVILLE</td>
+      <td>95747</td>
+      <td>CA</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1049.0</td>
+      <td>Residential</td>
+      <td>Fri May 16 00:00:00 EDT 2008</td>
+      <td>325500</td>
+      <td>38.772821</td>
+      <td>-121.364821</td>
+    </tr>
+    <tr>
+      <th>819</th>
+      <td>2274 IVY BRIDGE DR</td>
+      <td>ROSEVILLE</td>
+      <td>95747</td>
+      <td>CA</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1049.0</td>
+      <td>Residential</td>
+      <td>Fri May 16 00:00:00 EDT 2008</td>
+      <td>375000</td>
+      <td>38.778561</td>
+      <td>-121.362008</td>
+    </tr>
+    <tr>
+      <th>824</th>
+      <td>12075 APPLESBURY CT</td>
+      <td>RANCHO CORDOVA</td>
+      <td>95742</td>
+      <td>CA</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1222.0</td>
+      <td>Residential</td>
+      <td>Fri May 16 00:00:00 EDT 2008</td>
+      <td>390000</td>
+      <td>38.535700</td>
+      <td>-121.224900</td>
+    </tr>
+    <tr>
+      <th>826</th>
+      <td>5420 ALMOND FALLS WAY</td>
+      <td>RANCHO CORDOVA</td>
+      <td>95742</td>
+      <td>CA</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1222.0</td>
+      <td>Residential</td>
+      <td>Fri May 16 00:00:00 EDT 2008</td>
+      <td>396000</td>
+      <td>38.527384</td>
+      <td>-121.233531</td>
+    </tr>
+    <tr>
+      <th>848</th>
+      <td>200 HILLSFORD CT</td>
+      <td>ROSEVILLE</td>
+      <td>95747</td>
+      <td>CA</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1049.0</td>
+      <td>Residential</td>
+      <td>Fri May 16 00:00:00 EDT 2008</td>
+      <td>511000</td>
+      <td>38.780051</td>
+      <td>-121.378718</td>
+    </tr>
+    <tr>
+      <th>970</th>
+      <td>3557 SODA WAY</td>
+      <td>SACRAMENTO</td>
+      <td>95834</td>
+      <td>CA</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1318.0</td>
+      <td>Residential</td>
+      <td>Thu May 15 00:00:00 EDT 2008</td>
+      <td>224000</td>
+      <td>38.631026</td>
+      <td>-121.501879</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div class="highlight"><pre><span></span><span class="n">one</span><span class="p">[</span><span class="s1">&#39;city&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="nb">array</span><span class="p">([</span><span class="s1">&#39;SACRAMENTO&#39;</span><span class="p">,</span> <span class="s1">&#39;RANCHO CORDOVA&#39;</span><span class="p">,</span> <span class="s1">&#39;ELK GROVE&#39;</span><span class="p">,</span> <span class="s1">&#39;FOLSOM&#39;</span><span class="p">,</span>
+       <span class="s1">&#39;RANCHO MURIETA&#39;</span><span class="p">,</span> <span class="s1">&#39;GOLD RIVER&#39;</span><span class="p">,</span> <span class="s1">&#39;ROSEVILLE&#39;</span><span class="p">,</span> <span class="s1">&#39;WILTON&#39;</span><span class="p">,</span> <span class="s1">&#39;GALT&#39;</span><span class="p">,</span>
+       <span class="s1">&#39;RIO LINDA&#39;</span><span class="p">,</span> <span class="s1">&#39;PLACERVILLE&#39;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="k">object</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="n">bed</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;city&#39;</span><span class="p">)[</span><span class="s1">&#39;beds&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">median</span><span class="p">()</span><span class="o">.</span><span class="n">to_frame</span><span class="p">()</span>
+<span class="n">bed</span>
+</pre></div>
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>beds</th>
+    </tr>
+    <tr>
+      <th>city</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>ANTELOPE</th>
+      <td>3.0</td>
+    </tr>
+    <tr>
+      <th>AUBURN</th>
+      <td>3.0</td>
+    </tr>
+    <tr>
+      <th>CARMICHAEL</th>
+      <td>3.0</td>
+    </tr>
+    <tr>
+      <th>CITRUS HEIGHTS</th>
+      <td>3.0</td>
+    </tr>
+    <tr>
+      <th>COOL</th>
+      <td>3.0</td>
+    </tr>
+    <tr>
+      <th>DIAMOND SPRINGS</th>
+      <td>3.0</td>
+    </tr>
+    <tr>
+      <th>EL DORADO</th>
+      <td>2.5</td>
+    </tr>
+    <tr>
+      <th>ELK GROVE</th>
+      <td>4.0</td>
+    </tr>
+    <tr>
+      <th>ELVERTA</th>
+      <td>3.0</td>
+    </tr>
+    <tr>
+      <th>FAIR OAKS</th>
+      <td>3.0</td>
+    </tr>
+    <tr>
+      <th>FOLSOM</th>
+      <td>4.0</td>
+    </tr>
+    <tr>
+      <th>GALT</th>
+      <td>3.0</td>
+    </tr>
+    <tr>
+      <th>GOLD RIVER</th>
+      <td>2.5</td>
+    </tr>
+    <tr>
+      <th>GRANITE BAY</th>
+      <td>5.0</td>
+    </tr>
+    <tr>
+      <th>GREENWOOD</th>
+      <td>3.0</td>
+    </tr>
+    <tr>
+      <th>LOOMIS</th>
+      <td>4.0</td>
+    </tr>
+    <tr>
+      <th>MATHER</th>
+      <td>3.0</td>
+    </tr>
+    <tr>
+      <th>MEADOW VISTA</th>
+      <td>3.0</td>
+    </tr>
+    <tr>
+      <th>NORTH HIGHLANDS</th>
+      <td>3.0</td>
+    </tr>
+    <tr>
+      <th>ORANGEVALE</th>
+      <td>3.0</td>
+    </tr>
+    <tr>
+      <th>PENRYN</th>
+      <td>3.0</td>
+    </tr>
+    <tr>
+      <th>PLACERVILLE</th>
+      <td>3.0</td>
+    </tr>
+    <tr>
+      <th>POLLOCK PINES</th>
+      <td>3.0</td>
+    </tr>
+    <tr>
+      <th>RANCHO CORDOVA</th>
+      <td>3.0</td>
+    </tr>
+    <tr>
+      <th>RANCHO MURIETA</th>
+      <td>4.0</td>
+    </tr>
+    <tr>
+      <th>RIO LINDA</th>
+      <td>3.0</td>
+    </tr>
+    <tr>
+      <th>ROSEVILLE</th>
+      <td>3.0</td>
+    </tr>
+    <tr>
+      <th>SACRAMENTO</th>
+      <td>3.0</td>
+    </tr>
+    <tr>
+      <th>SLOUGHHOUSE</th>
+      <td>3.0</td>
+    </tr>
+    <tr>
+      <th>WALNUT GROVE</th>
+      <td>3.0</td>
+    </tr>
+    <tr>
+      <th>WILTON</th>
+      <td>4.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div class="highlight"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df</span><span class="o">.</span><span class="n">city</span> <span class="o">==</span> <span class="s1">&#39;SACRAMENTO&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">beds</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">,</span> <span class="s1">&#39;beds&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bed</span><span class="p">[</span><span class="s1">&#39;beds&#39;</span><span class="p">][</span><span class="mi">27</span><span class="p">]</span>
+
+<span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df</span><span class="o">.</span><span class="n">city</span> <span class="o">==</span> <span class="s1">&#39;RANCHO CORDOVA&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">beds</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">,</span> <span class="s1">&#39;beds&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bed</span><span class="p">[</span><span class="s1">&#39;beds&#39;</span><span class="p">][</span><span class="mi">23</span><span class="p">]</span>
+
+<span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df</span><span class="o">.</span><span class="n">city</span> <span class="o">==</span> <span class="s1">&#39;ELK GROVE&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">beds</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">,</span> <span class="s1">&#39;beds&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bed</span><span class="p">[</span><span class="s1">&#39;beds&#39;</span><span class="p">][</span><span class="mi">7</span><span class="p">]</span>
+
+<span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df</span><span class="o">.</span><span class="n">city</span> <span class="o">==</span> <span class="s1">&#39;FOLSOM&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">beds</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">,</span> <span class="s1">&#39;beds&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bed</span><span class="p">[</span><span class="s1">&#39;beds&#39;</span><span class="p">][</span><span class="mi">10</span><span class="p">]</span>
+
+<span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df</span><span class="o">.</span><span class="n">city</span> <span class="o">==</span> <span class="s1">&#39;RANCHO MURIETA&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">beds</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">,</span> <span class="s1">&#39;beds&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bed</span><span class="p">[</span><span class="s1">&#39;beds&#39;</span><span class="p">][</span><span class="mi">24</span><span class="p">]</span>
+
+<span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df</span><span class="o">.</span><span class="n">city</span> <span class="o">==</span> <span class="s1">&#39;GOLD RIVER&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">beds</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">,</span> <span class="s1">&#39;beds&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bed</span><span class="p">[</span><span class="s1">&#39;beds&#39;</span><span class="p">][</span><span class="mi">12</span><span class="p">]</span>
+
+<span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df</span><span class="o">.</span><span class="n">city</span> <span class="o">==</span> <span class="s1">&#39;WILTON&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">beds</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">,</span> <span class="s1">&#39;beds&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bed</span><span class="p">[</span><span class="s1">&#39;beds&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+<span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df</span><span class="o">.</span><span class="n">city</span> <span class="o">==</span> <span class="s1">&#39;GALT&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">beds</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">,</span> <span class="s1">&#39;beds&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bed</span><span class="p">[</span><span class="s1">&#39;beds&#39;</span><span class="p">][</span><span class="mi">11</span><span class="p">]</span>
+
+<span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df</span><span class="o">.</span><span class="n">city</span> <span class="o">==</span> <span class="s1">&#39;RIO LINDA&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">beds</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">,</span> <span class="s1">&#39;beds&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bed</span><span class="p">[</span><span class="s1">&#39;beds&#39;</span><span class="p">][</span><span class="mi">25</span><span class="p">]</span>
+
+<span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df</span><span class="o">.</span><span class="n">city</span> <span class="o">==</span> <span class="s1">&#39;PLACERVILLE&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">beds</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">,</span> <span class="s1">&#39;beds&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bed</span><span class="p">[</span><span class="s1">&#39;beds&#39;</span><span class="p">][</span><span class="mi">21</span><span class="p">]</span>
+
+<span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df</span><span class="o">.</span><span class="n">city</span> <span class="o">==</span> <span class="s1">&#39;ROSEVILLE&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">beds</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">,</span> <span class="s1">&#39;beds&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bed</span><span class="p">[</span><span class="s1">&#39;beds&#39;</span><span class="p">][</span><span class="mi">26</span><span class="p">]</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="c1"># Replaceing median value to baths with value &#39;0&#39;</span>
+
+<span class="n">two</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;baths&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">]</span>
+<span class="n">two</span>
+</pre></div>
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>street</th>
+      <th>city</th>
+      <th>zip</th>
+      <th>state</th>
+      <th>beds</th>
+      <th>baths</th>
+      <th>sq_ft</th>
+      <th>type</th>
+      <th>sale_date</th>
+      <th>price</th>
+      <th>latitude</th>
+      <th>longitude</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>73</th>
+      <td>17 SERASPI CT</td>
+      <td>SACRAMENTO</td>
+      <td>95834</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>1318.0</td>
+      <td>Residential</td>
+      <td>Wed May 21 00:00:00 EDT 2008</td>
+      <td>206000</td>
+      <td>38.631481</td>
+      <td>-121.501880</td>
+    </tr>
+    <tr>
+      <th>89</th>
+      <td>2866 KARITSA AVE</td>
+      <td>SACRAMENTO</td>
+      <td>95833</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>1318.0</td>
+      <td>Residential</td>
+      <td>Wed May 21 00:00:00 EDT 2008</td>
+      <td>244500</td>
+      <td>38.626671</td>
+      <td>-121.525970</td>
+    </tr>
+    <tr>
+      <th>100</th>
+      <td>12209 CONSERVANCY WAY</td>
+      <td>RANCHO CORDOVA</td>
+      <td>95742</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>1222.0</td>
+      <td>Residential</td>
+      <td>Wed May 21 00:00:00 EDT 2008</td>
+      <td>263500</td>
+      <td>38.553867</td>
+      <td>-121.219141</td>
+    </tr>
+    <tr>
+      <th>121</th>
+      <td>5337 DUSTY ROSE WAY</td>
+      <td>RANCHO CORDOVA</td>
+      <td>95742</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>1222.0</td>
+      <td>Residential</td>
+      <td>Wed May 21 00:00:00 EDT 2008</td>
+      <td>320000</td>
+      <td>38.528575</td>
+      <td>-121.228600</td>
+    </tr>
+    <tr>
+      <th>126</th>
+      <td>2115 SMOKESTACK WAY</td>
+      <td>SACRAMENTO</td>
+      <td>95833</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>1318.0</td>
+      <td>Residential</td>
+      <td>Wed May 21 00:00:00 EDT 2008</td>
+      <td>339500</td>
+      <td>38.602416</td>
+      <td>-121.542965</td>
+    </tr>
+    <tr>
+      <th>133</th>
+      <td>8082 LINDA ISLE LN</td>
+      <td>SACRAMENTO</td>
+      <td>95831</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>1318.0</td>
+      <td>Residential</td>
+      <td>Wed May 21 00:00:00 EDT 2008</td>
+      <td>370000</td>
+      <td>38.477200</td>
+      <td>-121.521500</td>
+    </tr>
+    <tr>
+      <th>147</th>
+      <td>9278 DAIRY CT</td>
+      <td>ELK GROVE</td>
+      <td>95624</td>
+      <td>CA</td>
+      <td>4.0</td>
+      <td>0</td>
+      <td>1722.5</td>
+      <td>Residential</td>
+      <td>Wed May 21 00:00:00 EDT 2008</td>
+      <td>445000</td>
+      <td>38.420338</td>
+      <td>-121.363757</td>
+    </tr>
+    <tr>
+      <th>153</th>
+      <td>868 HILDEBRAND CIR</td>
+      <td>FOLSOM</td>
+      <td>95630</td>
+      <td>CA</td>
+      <td>4.0</td>
+      <td>0</td>
+      <td>1939.0</td>
+      <td>Residential</td>
+      <td>Wed May 21 00:00:00 EDT 2008</td>
+      <td>585000</td>
+      <td>38.670947</td>
+      <td>-121.097727</td>
+    </tr>
+    <tr>
+      <th>169</th>
+      <td>14788 NATCHEZ CT</td>
+      <td>RANCHO MURIETA</td>
+      <td>95683</td>
+      <td>CA</td>
+      <td>4.0</td>
+      <td>0</td>
+      <td>2734.0</td>
+      <td>Residential</td>
+      <td>Tue May 20 00:00:00 EDT 2008</td>
+      <td>97750</td>
+      <td>38.492287</td>
+      <td>-121.100032</td>
+    </tr>
+    <tr>
+      <th>192</th>
+      <td>5201 LAGUNA OAKS DR Unit 126</td>
+      <td>ELK GROVE</td>
+      <td>95758</td>
+      <td>CA</td>
+      <td>4.0</td>
+      <td>0</td>
+      <td>1722.5</td>
+      <td>Condo</td>
+      <td>Tue May 20 00:00:00 EDT 2008</td>
+      <td>145000</td>
+      <td>38.423251</td>
+      <td>-121.444489</td>
+    </tr>
+    <tr>
+      <th>234</th>
+      <td>3139 SPOONWOOD WAY Unit 1</td>
+      <td>SACRAMENTO</td>
+      <td>95833</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>1318.0</td>
+      <td>Residential</td>
+      <td>Tue May 20 00:00:00 EDT 2008</td>
+      <td>215500</td>
+      <td>38.626582</td>
+      <td>-121.521510</td>
+    </tr>
+    <tr>
+      <th>236</th>
+      <td>2340 HURLEY WAY</td>
+      <td>SACRAMENTO</td>
+      <td>95825</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>1318.0</td>
+      <td>Condo</td>
+      <td>Tue May 20 00:00:00 EDT 2008</td>
+      <td>225000</td>
+      <td>38.588816</td>
+      <td>-121.408549</td>
+    </tr>
+    <tr>
+      <th>248</th>
+      <td>611 BLOSSOM ROCK LN</td>
+      <td>FOLSOM</td>
+      <td>95630</td>
+      <td>CA</td>
+      <td>4.0</td>
+      <td>0</td>
+      <td>1939.0</td>
+      <td>Condo</td>
+      <td>Tue May 20 00:00:00 EDT 2008</td>
+      <td>240000</td>
+      <td>38.645700</td>
+      <td>-121.119700</td>
+    </tr>
+    <tr>
+      <th>249</th>
+      <td>8830 ADUR RD</td>
+      <td>ELK GROVE</td>
+      <td>95624</td>
+      <td>CA</td>
+      <td>4.0</td>
+      <td>0</td>
+      <td>1722.5</td>
+      <td>Residential</td>
+      <td>Tue May 20 00:00:00 EDT 2008</td>
+      <td>242000</td>
+      <td>38.437420</td>
+      <td>-121.372876</td>
+    </tr>
+    <tr>
+      <th>253</th>
+      <td>221 PICASSO CIR</td>
+      <td>SACRAMENTO</td>
+      <td>95835</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>1318.0</td>
+      <td>Residential</td>
+      <td>Tue May 20 00:00:00 EDT 2008</td>
+      <td>250000</td>
+      <td>38.676658</td>
+      <td>-121.528128</td>
+    </tr>
+    <tr>
+      <th>265</th>
+      <td>230 BANKSIDE WAY</td>
+      <td>SACRAMENTO</td>
+      <td>95835</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>1318.0</td>
+      <td>Residential</td>
+      <td>Tue May 20 00:00:00 EDT 2008</td>
+      <td>270000</td>
+      <td>38.676937</td>
+      <td>-121.529244</td>
+    </tr>
+    <tr>
+      <th>268</th>
+      <td>4236 ADRIATIC SEA WAY</td>
+      <td>SACRAMENTO</td>
+      <td>95834</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>1318.0</td>
+      <td>Residential</td>
+      <td>Tue May 20 00:00:00 EDT 2008</td>
+      <td>270000</td>
+      <td>38.647961</td>
+      <td>-121.543162</td>
+    </tr>
+    <tr>
+      <th>279</th>
+      <td>11281 STANFORD COURT LN Unit 604</td>
+      <td>GOLD RIVER</td>
+      <td>95670</td>
+      <td>CA</td>
+      <td>2.5</td>
+      <td>0</td>
+      <td>1750.5</td>
+      <td>Condo</td>
+      <td>Tue May 20 00:00:00 EDT 2008</td>
+      <td>300000</td>
+      <td>38.625289</td>
+      <td>-121.260286</td>
+    </tr>
+    <tr>
+      <th>285</th>
+      <td>3224 PARKHAM DR</td>
+      <td>ROSEVILLE</td>
+      <td>95747</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>1049.0</td>
+      <td>Residential</td>
+      <td>Tue May 20 00:00:00 EDT 2008</td>
+      <td>306500</td>
+      <td>38.772771</td>
+      <td>-121.364877</td>
+    </tr>
+    <tr>
+      <th>286</th>
+      <td>15 VANESSA PL</td>
+      <td>SACRAMENTO</td>
+      <td>95835</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>1318.0</td>
+      <td>Residential</td>
+      <td>Tue May 20 00:00:00 EDT 2008</td>
+      <td>312500</td>
+      <td>38.668692</td>
+      <td>-121.545490</td>
+    </tr>
+    <tr>
+      <th>308</th>
+      <td>5404 ALMOND FALLS WAY</td>
+      <td>RANCHO CORDOVA</td>
+      <td>95742</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>1222.0</td>
+      <td>Residential</td>
+      <td>Tue May 20 00:00:00 EDT 2008</td>
+      <td>425000</td>
+      <td>38.527502</td>
+      <td>-121.233492</td>
+    </tr>
+    <tr>
+      <th>310</th>
+      <td>14 CASA VATONI PL</td>
+      <td>SACRAMENTO</td>
+      <td>95834</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>1318.0</td>
+      <td>Residential</td>
+      <td>Tue May 20 00:00:00 EDT 2008</td>
+      <td>433500</td>
+      <td>38.650221</td>
+      <td>-121.551704</td>
+    </tr>
+    <tr>
+      <th>324</th>
+      <td>201 FIRESTONE DR</td>
+      <td>ROSEVILLE</td>
+      <td>95678</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>1049.0</td>
+      <td>Residential</td>
+      <td>Tue May 20 00:00:00 EDT 2008</td>
+      <td>500500</td>
+      <td>38.770153</td>
+      <td>-121.300039</td>
+    </tr>
+    <tr>
+      <th>327</th>
+      <td>9741 SADDLEBRED CT</td>
+      <td>WILTON</td>
+      <td>95693</td>
+      <td>CA</td>
+      <td>4.0</td>
+      <td>0</td>
+      <td>3741.0</td>
+      <td>Residential</td>
+      <td>Tue May 20 00:00:00 EDT 2008</td>
+      <td>560000</td>
+      <td>38.408841</td>
+      <td>-121.198039</td>
+    </tr>
+    <tr>
+      <th>469</th>
+      <td>8491 CRYSTAL WALK CIR</td>
+      <td>ELK GROVE</td>
+      <td>95758</td>
+      <td>CA</td>
+      <td>4.0</td>
+      <td>0</td>
+      <td>1722.5</td>
+      <td>Residential</td>
+      <td>Mon May 19 00:00:00 EDT 2008</td>
+      <td>261000</td>
+      <td>38.416916</td>
+      <td>-121.407554</td>
+    </tr>
+    <tr>
+      <th>494</th>
+      <td>3072 VILLAGE PLAZA DR</td>
+      <td>ROSEVILLE</td>
+      <td>95747</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>1049.0</td>
+      <td>Residential</td>
+      <td>Mon May 19 00:00:00 EDT 2008</td>
+      <td>307000</td>
+      <td>38.773094</td>
+      <td>-121.365905</td>
+    </tr>
+    <tr>
+      <th>503</th>
+      <td>12241 CANYONLANDS DR</td>
+      <td>RANCHO CORDOVA</td>
+      <td>95742</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>1222.0</td>
+      <td>Residential</td>
+      <td>Mon May 19 00:00:00 EDT 2008</td>
+      <td>331500</td>
+      <td>38.557293</td>
+      <td>-121.217611</td>
+    </tr>
+    <tr>
+      <th>505</th>
+      <td>907 RIO ROBLES AVE</td>
+      <td>SACRAMENTO</td>
+      <td>95838</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>1318.0</td>
+      <td>Residential</td>
+      <td>Mon May 19 00:00:00 EDT 2008</td>
+      <td>344755</td>
+      <td>38.664765</td>
+      <td>-121.445006</td>
+    </tr>
+    <tr>
+      <th>509</th>
+      <td>1033 PARK STREAM DR</td>
+      <td>GALT</td>
+      <td>95632</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>1479.0</td>
+      <td>Residential</td>
+      <td>Mon May 19 00:00:00 EDT 2008</td>
+      <td>355000</td>
+      <td>38.287785</td>
+      <td>-121.289903</td>
+    </tr>
+    <tr>
+      <th>511</th>
+      <td>1322 SUTTER WALK</td>
+      <td>SACRAMENTO</td>
+      <td>95816</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>1318.0</td>
+      <td>Condo</td>
+      <td>Mon May 19 00:00:00 EDT 2008</td>
+      <td>360000</td>
+      <td>38.538050</td>
+      <td>-121.504700</td>
+    </tr>
+    <tr>
+      <th>516</th>
+      <td>1336 LAYSAN TEAL DR</td>
+      <td>ROSEVILLE</td>
+      <td>95747</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>1049.0</td>
+      <td>Residential</td>
+      <td>Mon May 19 00:00:00 EDT 2008</td>
+      <td>368500</td>
+      <td>38.796121</td>
+      <td>-121.319963</td>
+    </tr>
+    <tr>
+      <th>520</th>
+      <td>6313 CASTRO VERDE WAY</td>
+      <td>ELK GROVE</td>
+      <td>95757</td>
+      <td>CA</td>
+      <td>4.0</td>
+      <td>0</td>
+      <td>1722.5</td>
+      <td>Residential</td>
+      <td>Mon May 19 00:00:00 EDT 2008</td>
+      <td>383000</td>
+      <td>38.381102</td>
+      <td>-121.429010</td>
+    </tr>
+    <tr>
+      <th>604</th>
+      <td>113 RINETTI WAY</td>
+      <td>RIO LINDA</td>
+      <td>95673</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>1182.0</td>
+      <td>Residential</td>
+      <td>Fri May 16 00:00:00 EDT 2008</td>
+      <td>30000</td>
+      <td>38.687172</td>
+      <td>-121.463933</td>
+    </tr>
+    <tr>
+      <th>718</th>
+      <td>9967 HATHERTON WAY</td>
+      <td>ELK GROVE</td>
+      <td>95757</td>
+      <td>CA</td>
+      <td>4.0</td>
+      <td>0</td>
+      <td>1722.5</td>
+      <td>Residential</td>
+      <td>Fri May 16 00:00:00 EDT 2008</td>
+      <td>222500</td>
+      <td>38.305200</td>
+      <td>-121.403300</td>
+    </tr>
+    <tr>
+      <th>737</th>
+      <td>3569 SODA WAY</td>
+      <td>SACRAMENTO</td>
+      <td>95834</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>1318.0</td>
+      <td>Residential</td>
+      <td>Fri May 16 00:00:00 EDT 2008</td>
+      <td>247000</td>
+      <td>38.631139</td>
+      <td>-121.501879</td>
+    </tr>
+    <tr>
+      <th>754</th>
+      <td>6001 SHOO FLY RD</td>
+      <td>PLACERVILLE</td>
+      <td>95667</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>474.0</td>
+      <td>Residential</td>
+      <td>Fri May 16 00:00:00 EDT 2008</td>
+      <td>270000</td>
+      <td>38.813546</td>
+      <td>-120.809254</td>
+    </tr>
+    <tr>
+      <th>755</th>
+      <td>3040 PARKHAM DR</td>
+      <td>ROSEVILLE</td>
+      <td>95747</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>1049.0</td>
+      <td>Residential</td>
+      <td>Fri May 16 00:00:00 EDT 2008</td>
+      <td>271000</td>
+      <td>38.770835</td>
+      <td>-121.366996</td>
+    </tr>
+    <tr>
+      <th>774</th>
+      <td>8253 KEEGAN WAY</td>
+      <td>ELK GROVE</td>
+      <td>95624</td>
+      <td>CA</td>
+      <td>4.0</td>
+      <td>0</td>
+      <td>1722.5</td>
+      <td>Residential</td>
+      <td>Fri May 16 00:00:00 EDT 2008</td>
+      <td>298000</td>
+      <td>38.446286</td>
+      <td>-121.400817</td>
+    </tr>
+    <tr>
+      <th>789</th>
+      <td>5222 COPPER SUNSET WAY</td>
+      <td>RANCHO CORDOVA</td>
+      <td>95742</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>1222.0</td>
+      <td>Residential</td>
+      <td>Fri May 16 00:00:00 EDT 2008</td>
+      <td>313000</td>
+      <td>38.529181</td>
+      <td>-121.224755</td>
+    </tr>
+    <tr>
+      <th>798</th>
+      <td>3232 PARKHAM DR</td>
+      <td>ROSEVILLE</td>
+      <td>95747</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>1049.0</td>
+      <td>Residential</td>
+      <td>Fri May 16 00:00:00 EDT 2008</td>
+      <td>325500</td>
+      <td>38.772821</td>
+      <td>-121.364821</td>
+    </tr>
+    <tr>
+      <th>819</th>
+      <td>2274 IVY BRIDGE DR</td>
+      <td>ROSEVILLE</td>
+      <td>95747</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>1049.0</td>
+      <td>Residential</td>
+      <td>Fri May 16 00:00:00 EDT 2008</td>
+      <td>375000</td>
+      <td>38.778561</td>
+      <td>-121.362008</td>
+    </tr>
+    <tr>
+      <th>824</th>
+      <td>12075 APPLESBURY CT</td>
+      <td>RANCHO CORDOVA</td>
+      <td>95742</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>1222.0</td>
+      <td>Residential</td>
+      <td>Fri May 16 00:00:00 EDT 2008</td>
+      <td>390000</td>
+      <td>38.535700</td>
+      <td>-121.224900</td>
+    </tr>
+    <tr>
+      <th>826</th>
+      <td>5420 ALMOND FALLS WAY</td>
+      <td>RANCHO CORDOVA</td>
+      <td>95742</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>1222.0</td>
+      <td>Residential</td>
+      <td>Fri May 16 00:00:00 EDT 2008</td>
+      <td>396000</td>
+      <td>38.527384</td>
+      <td>-121.233531</td>
+    </tr>
+    <tr>
+      <th>848</th>
+      <td>200 HILLSFORD CT</td>
+      <td>ROSEVILLE</td>
+      <td>95747</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>1049.0</td>
+      <td>Residential</td>
+      <td>Fri May 16 00:00:00 EDT 2008</td>
+      <td>511000</td>
+      <td>38.780051</td>
+      <td>-121.378718</td>
+    </tr>
+    <tr>
+      <th>970</th>
+      <td>3557 SODA WAY</td>
+      <td>SACRAMENTO</td>
+      <td>95834</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>1318.0</td>
+      <td>Residential</td>
+      <td>Thu May 15 00:00:00 EDT 2008</td>
+      <td>224000</td>
+      <td>38.631026</td>
+      <td>-121.501879</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div class="highlight"><pre><span></span><span class="n">two</span><span class="p">[</span><span class="s1">&#39;city&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="nb">array</span><span class="p">([</span><span class="s1">&#39;SACRAMENTO&#39;</span><span class="p">,</span> <span class="s1">&#39;RANCHO CORDOVA&#39;</span><span class="p">,</span> <span class="s1">&#39;ELK GROVE&#39;</span><span class="p">,</span> <span class="s1">&#39;FOLSOM&#39;</span><span class="p">,</span>
+       <span class="s1">&#39;RANCHO MURIETA&#39;</span><span class="p">,</span> <span class="s1">&#39;GOLD RIVER&#39;</span><span class="p">,</span> <span class="s1">&#39;ROSEVILLE&#39;</span><span class="p">,</span> <span class="s1">&#39;WILTON&#39;</span><span class="p">,</span> <span class="s1">&#39;GALT&#39;</span><span class="p">,</span>
+       <span class="s1">&#39;RIO LINDA&#39;</span><span class="p">,</span> <span class="s1">&#39;PLACERVILLE&#39;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="k">object</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="n">bath</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;city&#39;</span><span class="p">)[</span><span class="s1">&#39;baths&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">median</span><span class="p">()</span><span class="o">.</span><span class="n">to_frame</span><span class="p">()</span>
+<span class="n">bath</span>
+</pre></div>
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>baths</th>
+    </tr>
+    <tr>
+      <th>city</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>ANTELOPE</th>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>AUBURN</th>
+      <td>3.0</td>
+    </tr>
+    <tr>
+      <th>CARMICHAEL</th>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>CITRUS HEIGHTS</th>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>COOL</th>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>DIAMOND SPRINGS</th>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>EL DORADO</th>
+      <td>1.5</td>
+    </tr>
+    <tr>
+      <th>ELK GROVE</th>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>ELVERTA</th>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>FAIR OAKS</th>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>FOLSOM</th>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>GALT</th>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>GOLD RIVER</th>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>GRANITE BAY</th>
+      <td>3.0</td>
+    </tr>
+    <tr>
+      <th>GREENWOOD</th>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>LOOMIS</th>
+      <td>3.0</td>
+    </tr>
+    <tr>
+      <th>MATHER</th>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>MEADOW VISTA</th>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>NORTH HIGHLANDS</th>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>ORANGEVALE</th>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>PENRYN</th>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>PLACERVILLE</th>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>POLLOCK PINES</th>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>RANCHO CORDOVA</th>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>RANCHO MURIETA</th>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>RIO LINDA</th>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>ROSEVILLE</th>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>SACRAMENTO</th>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>SLOUGHHOUSE</th>
+      <td>4.0</td>
+    </tr>
+    <tr>
+      <th>WALNUT GROVE</th>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>WILTON</th>
+      <td>2.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div class="highlight"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df</span><span class="o">.</span><span class="n">city</span> <span class="o">==</span> <span class="s1">&#39;SACRAMENTO&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">baths</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">,</span> <span class="s1">&#39;baths&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bath</span><span class="p">[</span><span class="s1">&#39;baths&#39;</span><span class="p">][</span><span class="mi">27</span><span class="p">]</span>
+
+<span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df</span><span class="o">.</span><span class="n">city</span> <span class="o">==</span> <span class="s1">&#39;RANCHO CORDOVA&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">baths</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">,</span> <span class="s1">&#39;baths&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bath</span><span class="p">[</span><span class="s1">&#39;baths&#39;</span><span class="p">][</span><span class="mi">23</span><span class="p">]</span>
+
+<span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df</span><span class="o">.</span><span class="n">city</span> <span class="o">==</span> <span class="s1">&#39;ELK GROVE&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">baths</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">,</span> <span class="s1">&#39;baths&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bath</span><span class="p">[</span><span class="s1">&#39;baths&#39;</span><span class="p">][</span><span class="mi">7</span><span class="p">]</span>
+
+<span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df</span><span class="o">.</span><span class="n">city</span> <span class="o">==</span> <span class="s1">&#39;FOLSOM&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">baths</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">,</span> <span class="s1">&#39;baths&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bath</span><span class="p">[</span><span class="s1">&#39;baths&#39;</span><span class="p">][</span><span class="mi">10</span><span class="p">]</span>
+
+<span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df</span><span class="o">.</span><span class="n">city</span> <span class="o">==</span> <span class="s1">&#39;RANCHO MURIETA&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">baths</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">,</span> <span class="s1">&#39;baths&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bath</span><span class="p">[</span><span class="s1">&#39;baths&#39;</span><span class="p">][</span><span class="mi">24</span><span class="p">]</span>
+
+<span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df</span><span class="o">.</span><span class="n">city</span> <span class="o">==</span> <span class="s1">&#39;GOLD RIVER&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">baths</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">,</span> <span class="s1">&#39;baths&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bath</span><span class="p">[</span><span class="s1">&#39;baths&#39;</span><span class="p">][</span><span class="mi">12</span><span class="p">]</span>
+
+<span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df</span><span class="o">.</span><span class="n">city</span> <span class="o">==</span> <span class="s1">&#39;ROSEVILLE&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">baths</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">,</span> <span class="s1">&#39;baths&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bath</span><span class="p">[</span><span class="s1">&#39;baths&#39;</span><span class="p">][</span><span class="mi">26</span><span class="p">]</span>
+
+<span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df</span><span class="o">.</span><span class="n">city</span> <span class="o">==</span> <span class="s1">&#39;WILTON&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">baths</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">,</span> <span class="s1">&#39;baths&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bath</span><span class="p">[</span><span class="s1">&#39;baths&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+<span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df</span><span class="o">.</span><span class="n">city</span> <span class="o">==</span> <span class="s1">&#39;GALT&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">baths</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">,</span> <span class="s1">&#39;baths&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bath</span><span class="p">[</span><span class="s1">&#39;baths&#39;</span><span class="p">][</span><span class="mi">11</span><span class="p">]</span>
+
+<span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df</span><span class="o">.</span><span class="n">city</span> <span class="o">==</span> <span class="s1">&#39;RIO LINDA&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">baths</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">,</span> <span class="s1">&#39;baths&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bath</span><span class="p">[</span><span class="s1">&#39;baths&#39;</span><span class="p">][</span><span class="mi">25</span><span class="p">]</span>
+
+<span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df</span><span class="o">.</span><span class="n">city</span> <span class="o">==</span> <span class="s1">&#39;PLACERVILLE&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">baths</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">,</span> <span class="s1">&#39;baths&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bath</span><span class="p">[</span><span class="s1">&#39;baths&#39;</span><span class="p">][</span><span class="mi">21</span><span class="p">]</span>
+</pre></div>
+
+
+<h6>After some work, our dataframe looks much nicer.</h6>
+<div class="highlight"><pre><span></span><span class="n">df</span>
+</pre></div>
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>street</th>
+      <th>city</th>
+      <th>zip</th>
+      <th>state</th>
+      <th>beds</th>
+      <th>baths</th>
+      <th>sq_ft</th>
+      <th>type</th>
+      <th>sale_date</th>
+      <th>price</th>
+      <th>latitude</th>
+      <th>longitude</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>3526 HIGH ST</td>
+      <td>SACRAMENTO</td>
+      <td>95838</td>
+      <td>CA</td>
+      <td>2.0</td>
+      <td>1.0</td>
+      <td>836.0</td>
+      <td>Residential</td>
+      <td>Wed May 21 00:00:00 EDT 2008</td>
+      <td>59222</td>
+      <td>38.631913</td>
+      <td>-121.434879</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>51 OMAHA CT</td>
+      <td>SACRAMENTO</td>
+      <td>95823</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>1.0</td>
+      <td>1167.0</td>
+      <td>Residential</td>
+      <td>Wed May 21 00:00:00 EDT 2008</td>
+      <td>68212</td>
+      <td>38.478902</td>
+      <td>-121.431028</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2796 BRANCH ST</td>
+      <td>SACRAMENTO</td>
+      <td>95815</td>
+      <td>CA</td>
+      <td>2.0</td>
+      <td>1.0</td>
+      <td>796.0</td>
+      <td>Residential</td>
+      <td>Wed May 21 00:00:00 EDT 2008</td>
+      <td>68880</td>
+      <td>38.618305</td>
+      <td>-121.443839</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>2805 JANETTE WAY</td>
+      <td>SACRAMENTO</td>
+      <td>95815</td>
+      <td>CA</td>
+      <td>2.0</td>
+      <td>1.0</td>
+      <td>852.0</td>
+      <td>Residential</td>
+      <td>Wed May 21 00:00:00 EDT 2008</td>
+      <td>69307</td>
+      <td>38.616835</td>
+      <td>-121.439146</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>6001 MCMAHON DR</td>
+      <td>SACRAMENTO</td>
+      <td>95824</td>
+      <td>CA</td>
+      <td>2.0</td>
+      <td>1.0</td>
+      <td>797.0</td>
+      <td>Residential</td>
+      <td>Wed May 21 00:00:00 EDT 2008</td>
+      <td>81900</td>
+      <td>38.519470</td>
+      <td>-121.435768</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>5828 PEPPERMILL CT</td>
+      <td>SACRAMENTO</td>
+      <td>95841</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>1.0</td>
+      <td>1122.0</td>
+      <td>Condo</td>
+      <td>Wed May 21 00:00:00 EDT 2008</td>
+      <td>89921</td>
+      <td>38.662595</td>
+      <td>-121.327813</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>6048 OGDEN NASH WAY</td>
+      <td>SACRAMENTO</td>
+      <td>95842</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>2.0</td>
+      <td>1104.0</td>
+      <td>Residential</td>
+      <td>Wed May 21 00:00:00 EDT 2008</td>
+      <td>90895</td>
+      <td>38.681659</td>
+      <td>-121.351705</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>2561 19TH AVE</td>
+      <td>SACRAMENTO</td>
+      <td>95820</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>1.0</td>
+      <td>1177.0</td>
+      <td>Residential</td>
+      <td>Wed May 21 00:00:00 EDT 2008</td>
+      <td>91002</td>
+      <td>38.535092</td>
+      <td>-121.481367</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>11150 TRINITY RIVER DR Unit 114</td>
+      <td>RANCHO CORDOVA</td>
+      <td>95670</td>
+      <td>CA</td>
+      <td>2.0</td>
+      <td>2.0</td>
+      <td>941.0</td>
+      <td>Condo</td>
+      <td>Wed May 21 00:00:00 EDT 2008</td>
+      <td>94905</td>
+      <td>38.621188</td>
+      <td>-121.270555</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>7325 10TH ST</td>
+      <td>RIO LINDA</td>
+      <td>95673</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>2.0</td>
+      <td>1146.0</td>
+      <td>Residential</td>
+      <td>Wed May 21 00:00:00 EDT 2008</td>
+      <td>98937</td>
+      <td>38.700909</td>
+      <td>-121.442979</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>645 MORRISON AVE</td>
+      <td>SACRAMENTO</td>
+      <td>95838</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>2.0</td>
+      <td>909.0</td>
+      <td>Residential</td>
+      <td>Wed May 21 00:00:00 EDT 2008</td>
+      <td>100309</td>
+      <td>38.637663</td>
+      <td>-121.451520</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>4085 FAWN CIR</td>
+      <td>SACRAMENTO</td>
+      <td>95823</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>2.0</td>
+      <td>1289.0</td>
+      <td>Residential</td>
+      <td>Wed May 21 00:00:00 EDT 2008</td>
+      <td>106250</td>
+      <td>38.470746</td>
+      <td>-121.458918</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>2930 LA ROSA RD</td>
+      <td>SACRAMENTO</td>
+      <td>95815</td>
+      <td>CA</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>871.0</td>
+      <td>Residential</td>
+      <td>Wed May 21 00:00:00 EDT 2008</td>
+      <td>106852</td>
+      <td>38.618698</td>
+      <td>-121.435833</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>2113 KIRK WAY</td>
+      <td>SACRAMENTO</td>
+      <td>95822</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>1.0</td>
+      <td>1020.0</td>
+      <td>Residential</td>
+      <td>Wed May 21 00:00:00 EDT 2008</td>
+      <td>107502</td>
+      <td>38.482215</td>
+      <td>-121.492603</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>4533 LOCH HAVEN WAY</td>
+      <td>SACRAMENTO</td>
+      <td>95842</td>
+      <td>CA</td>
+      <td>2.0</td>
+      <td>2.0</td>
+      <td>1022.0</td>
+      <td>Residential</td>
+      <td>Wed May 21 00:00:00 EDT 2008</td>
+      <td>108750</td>
+      <td>38.672914</td>
+      <td>-121.359340</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>7340 HAMDEN PL</td>
+      <td>SACRAMENTO</td>
+      <td>95842</td>
+      <td>CA</td>
+      <td>2.0</td>
+      <td>2.0</td>
+      <td>1134.0</td>
+      <td>Condo</td>
+      <td>Wed May 21 00:00:00 EDT 2008</td>
+      <td>110700</td>
+      <td>38.700051</td>
+      <td>-121.351278</td>
+    </tr>
+    <tr>
+      <th>16</th>
+      <td>6715 6TH ST</td>
+      <td>RIO LINDA</td>
+      <td>95673</td>
+      <td>CA</td>
+      <td>2.0</td>
+      <td>1.0</td>
+      <td>844.0</td>
+      <td>Residential</td>
+      <td>Wed May 21 00:00:00 EDT 2008</td>
+      <td>113263</td>
+      <td>38.689591</td>
+      <td>-121.452239</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>6236 LONGFORD DR Unit 1</td>
+      <td>CITRUS HEIGHTS</td>
+      <td>95621</td>
+      <td>CA</td>
+      <td>2.0</td>
+      <td>1.0</td>
+      <td>795.0</td>
+      <td>Condo</td>
+      <td>Wed May 21 00:00:00 EDT 2008</td>
+      <td>116250</td>
+      <td>38.679776</td>
+      <td>-121.314089</td>
+    </tr>
+    <tr>
+      <th>18</th>
+      <td>250 PERALTA AVE</td>
+      <td>SACRAMENTO</td>
+      <td>95833</td>
+      <td>CA</td>
+      <td>2.0</td>
+      <td>1.0</td>
+      <td>588.0</td>
+      <td>Residential</td>
+      <td>Wed May 21 00:00:00 EDT 2008</td>
+      <td>120000</td>
+      <td>38.612099</td>
+      <td>-121.469095</td>
+    </tr>
+    <tr>
+      <th>19</th>
+      <td>113 LEEWILL AVE</td>
+      <td>RIO LINDA</td>
+      <td>95673</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>2.0</td>
+      <td>1356.0</td>
+      <td>Residential</td>
+      <td>Wed May 21 00:00:00 EDT 2008</td>
+      <td>121630</td>
+      <td>38.689999</td>
+      <td>-121.463220</td>
+    </tr>
+    <tr>
+      <th>20</th>
+      <td>6118 STONEHAND AVE</td>
+      <td>CITRUS HEIGHTS</td>
+      <td>95621</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>2.0</td>
+      <td>1118.0</td>
+      <td>Residential</td>
+      <td>Wed May 21 00:00:00 EDT 2008</td>
+      <td>122000</td>
+      <td>38.707851</td>
+      <td>-121.320707</td>
+    </tr>
+    <tr>
+      <th>21</th>
+      <td>4882 BANDALIN WAY</td>
+      <td>SACRAMENTO</td>
+      <td>95823</td>
+      <td>CA</td>
+      <td>4.0</td>
+      <td>2.0</td>
+      <td>1329.0</td>
+      <td>Residential</td>
+      <td>Wed May 21 00:00:00 EDT 2008</td>
+      <td>122682</td>
+      <td>38.468173</td>
+      <td>-121.444071</td>
+    </tr>
+    <tr>
+      <th>22</th>
+      <td>7511 OAKVALE CT</td>
+      <td>NORTH HIGHLANDS</td>
+      <td>95660</td>
+      <td>CA</td>
+      <td>4.0</td>
+      <td>2.0</td>
+      <td>1240.0</td>
+      <td>Residential</td>
+      <td>Wed May 21 00:00:00 EDT 2008</td>
+      <td>123000</td>
+      <td>38.702792</td>
+      <td>-121.382210</td>
+    </tr>
+    <tr>
+      <th>23</th>
+      <td>9 PASTURE CT</td>
+      <td>SACRAMENTO</td>
+      <td>95834</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>2.0</td>
+      <td>1601.0</td>
+      <td>Residential</td>
+      <td>Wed May 21 00:00:00 EDT 2008</td>
+      <td>124100</td>
+      <td>38.628631</td>
+      <td>-121.488097</td>
+    </tr>
+    <tr>
+      <th>24</th>
+      <td>3729 BAINBRIDGE DR</td>
+      <td>NORTH HIGHLANDS</td>
+      <td>95660</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>2.0</td>
+      <td>901.0</td>
+      <td>Residential</td>
+      <td>Wed May 21 00:00:00 EDT 2008</td>
+      <td>125000</td>
+      <td>38.701499</td>
+      <td>-121.376220</td>
+    </tr>
+    <tr>
+      <th>25</th>
+      <td>3828 BLACKFOOT WAY</td>
+      <td>ANTELOPE</td>
+      <td>95843</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>2.0</td>
+      <td>1088.0</td>
+      <td>Residential</td>
+      <td>Wed May 21 00:00:00 EDT 2008</td>
+      <td>126640</td>
+      <td>38.709740</td>
+      <td>-121.373770</td>
+    </tr>
+    <tr>
+      <th>26</th>
+      <td>4108 NORTON WAY</td>
+      <td>SACRAMENTO</td>
+      <td>95820</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>1.0</td>
+      <td>963.0</td>
+      <td>Residential</td>
+      <td>Wed May 21 00:00:00 EDT 2008</td>
+      <td>127281</td>
+      <td>38.537526</td>
+      <td>-121.478315</td>
+    </tr>
+    <tr>
+      <th>27</th>
+      <td>1469 JANRICK AVE</td>
+      <td>SACRAMENTO</td>
+      <td>95832</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>2.0</td>
+      <td>1119.0</td>
+      <td>Residential</td>
+      <td>Wed May 21 00:00:00 EDT 2008</td>
+      <td>129000</td>
+      <td>38.476472</td>
+      <td>-121.501711</td>
+    </tr>
+    <tr>
+      <th>28</th>
+      <td>9861 CULP WAY</td>
+      <td>SACRAMENTO</td>
+      <td>95827</td>
+      <td>CA</td>
+      <td>4.0</td>
+      <td>2.0</td>
+      <td>1380.0</td>
+      <td>Residential</td>
+      <td>Wed May 21 00:00:00 EDT 2008</td>
+      <td>131200</td>
+      <td>38.558423</td>
+      <td>-121.327948</td>
+    </tr>
+    <tr>
+      <th>29</th>
+      <td>7825 CREEK VALLEY CIR</td>
+      <td>SACRAMENTO</td>
+      <td>95828</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>2.0</td>
+      <td>1248.0</td>
+      <td>Residential</td>
+      <td>Wed May 21 00:00:00 EDT 2008</td>
+      <td>132000</td>
+      <td>38.472122</td>
+      <td>-121.404199</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>952</th>
+      <td>3230 SMATHERS WAY</td>
+      <td>CARMICHAEL</td>
+      <td>95608</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>2.0</td>
+      <td>1296.0</td>
+      <td>Residential</td>
+      <td>Thu May 15 00:00:00 EDT 2008</td>
+      <td>205900</td>
+      <td>38.623372</td>
+      <td>-121.347665</td>
+    </tr>
+    <tr>
+      <th>953</th>
+      <td>5209 LAGUNA CREST WAY</td>
+      <td>ELK GROVE</td>
+      <td>95758</td>
+      <td>CA</td>
+      <td>2.0</td>
+      <td>2.0</td>
+      <td>1189.0</td>
+      <td>Residential</td>
+      <td>Thu May 15 00:00:00 EDT 2008</td>
+      <td>207000</td>
+      <td>38.424421</td>
+      <td>-121.443915</td>
+    </tr>
+    <tr>
+      <th>954</th>
+      <td>416 LEITCH AVE</td>
+      <td>SACRAMENTO</td>
+      <td>95815</td>
+      <td>CA</td>
+      <td>2.0</td>
+      <td>1.0</td>
+      <td>795.0</td>
+      <td>Residential</td>
+      <td>Thu May 15 00:00:00 EDT 2008</td>
+      <td>207973</td>
+      <td>38.612694</td>
+      <td>-121.456669</td>
+    </tr>
+    <tr>
+      <th>955</th>
+      <td>2100 BEATTY WAY</td>
+      <td>ROSEVILLE</td>
+      <td>95747</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>2.0</td>
+      <td>1371.0</td>
+      <td>Residential</td>
+      <td>Thu May 15 00:00:00 EDT 2008</td>
+      <td>208250</td>
+      <td>38.737882</td>
+      <td>-121.308142</td>
+    </tr>
+    <tr>
+      <th>956</th>
+      <td>6920 GILLINGHAM WAY</td>
+      <td>NORTH HIGHLANDS</td>
+      <td>95660</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>1.0</td>
+      <td>1310.0</td>
+      <td>Residential</td>
+      <td>Thu May 15 00:00:00 EDT 2008</td>
+      <td>208318</td>
+      <td>38.694279</td>
+      <td>-121.373395</td>
+    </tr>
+    <tr>
+      <th>957</th>
+      <td>82 WILDFLOWER DR</td>
+      <td>GALT</td>
+      <td>95632</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>2.0</td>
+      <td>1262.0</td>
+      <td>Residential</td>
+      <td>Thu May 15 00:00:00 EDT 2008</td>
+      <td>209347</td>
+      <td>38.259708</td>
+      <td>-121.311616</td>
+    </tr>
+    <tr>
+      <th>958</th>
+      <td>8652 BANTON CIR</td>
+      <td>ELK GROVE</td>
+      <td>95624</td>
+      <td>CA</td>
+      <td>4.0</td>
+      <td>2.0</td>
+      <td>1740.0</td>
+      <td>Residential</td>
+      <td>Thu May 15 00:00:00 EDT 2008</td>
+      <td>211500</td>
+      <td>38.444000</td>
+      <td>-121.370993</td>
+    </tr>
+    <tr>
+      <th>959</th>
+      <td>8428 MISTY PASS WAY</td>
+      <td>ANTELOPE</td>
+      <td>95843</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>2.0</td>
+      <td>1517.0</td>
+      <td>Residential</td>
+      <td>Thu May 15 00:00:00 EDT 2008</td>
+      <td>212000</td>
+      <td>38.722959</td>
+      <td>-121.347115</td>
+    </tr>
+    <tr>
+      <th>960</th>
+      <td>7958 ROSEVIEW WAY</td>
+      <td>SACRAMENTO</td>
+      <td>95828</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>2.0</td>
+      <td>1450.0</td>
+      <td>Residential</td>
+      <td>Thu May 15 00:00:00 EDT 2008</td>
+      <td>213000</td>
+      <td>38.467836</td>
+      <td>-121.410366</td>
+    </tr>
+    <tr>
+      <th>961</th>
+      <td>9020 LUKEN CT</td>
+      <td>ELK GROVE</td>
+      <td>95624</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>2.0</td>
+      <td>1416.0</td>
+      <td>Residential</td>
+      <td>Thu May 15 00:00:00 EDT 2008</td>
+      <td>216000</td>
+      <td>38.451398</td>
+      <td>-121.366614</td>
+    </tr>
+    <tr>
+      <th>962</th>
+      <td>7809 VALLECITOS WAY</td>
+      <td>SACRAMENTO</td>
+      <td>95828</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>1.0</td>
+      <td>888.0</td>
+      <td>Residential</td>
+      <td>Thu May 15 00:00:00 EDT 2008</td>
+      <td>216021</td>
+      <td>38.508217</td>
+      <td>-121.411207</td>
+    </tr>
+    <tr>
+      <th>963</th>
+      <td>8445 OLD AUBURN RD</td>
+      <td>CITRUS HEIGHTS</td>
+      <td>95610</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>2.0</td>
+      <td>1882.0</td>
+      <td>Residential</td>
+      <td>Thu May 15 00:00:00 EDT 2008</td>
+      <td>219000</td>
+      <td>38.715423</td>
+      <td>-121.246743</td>
+    </tr>
+    <tr>
+      <th>964</th>
+      <td>10085 ATKINS DR</td>
+      <td>ELK GROVE</td>
+      <td>95757</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>2.0</td>
+      <td>1302.0</td>
+      <td>Residential</td>
+      <td>Thu May 15 00:00:00 EDT 2008</td>
+      <td>219794</td>
+      <td>38.390893</td>
+      <td>-121.437821</td>
+    </tr>
+    <tr>
+      <th>965</th>
+      <td>9185 CERROLINDA CIR</td>
+      <td>ELK GROVE</td>
+      <td>95758</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>2.0</td>
+      <td>1418.0</td>
+      <td>Residential</td>
+      <td>Thu May 15 00:00:00 EDT 2008</td>
+      <td>220000</td>
+      <td>38.424497</td>
+      <td>-121.426595</td>
+    </tr>
+    <tr>
+      <th>966</th>
+      <td>9197 CORTINA CIR</td>
+      <td>ROSEVILLE</td>
+      <td>95678</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>2.0</td>
+      <td>1049.0</td>
+      <td>Condo</td>
+      <td>Thu May 15 00:00:00 EDT 2008</td>
+      <td>220000</td>
+      <td>38.793152</td>
+      <td>-121.290025</td>
+    </tr>
+    <tr>
+      <th>967</th>
+      <td>5429 HESPER WAY</td>
+      <td>CARMICHAEL</td>
+      <td>95608</td>
+      <td>CA</td>
+      <td>4.0</td>
+      <td>2.0</td>
+      <td>1319.0</td>
+      <td>Residential</td>
+      <td>Thu May 15 00:00:00 EDT 2008</td>
+      <td>220000</td>
+      <td>38.665104</td>
+      <td>-121.315901</td>
+    </tr>
+    <tr>
+      <th>968</th>
+      <td>1178 WARMWOOD CT</td>
+      <td>GALT</td>
+      <td>95632</td>
+      <td>CA</td>
+      <td>4.0</td>
+      <td>2.0</td>
+      <td>1770.0</td>
+      <td>Residential</td>
+      <td>Thu May 15 00:00:00 EDT 2008</td>
+      <td>220000</td>
+      <td>38.289544</td>
+      <td>-121.284607</td>
+    </tr>
+    <tr>
+      <th>969</th>
+      <td>4900 ELUDE CT</td>
+      <td>SACRAMENTO</td>
+      <td>95842</td>
+      <td>CA</td>
+      <td>4.0</td>
+      <td>2.0</td>
+      <td>1627.0</td>
+      <td>Residential</td>
+      <td>Thu May 15 00:00:00 EDT 2008</td>
+      <td>223000</td>
+      <td>38.696740</td>
+      <td>-121.350519</td>
+    </tr>
+    <tr>
+      <th>970</th>
+      <td>3557 SODA WAY</td>
+      <td>SACRAMENTO</td>
+      <td>95834</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>2.0</td>
+      <td>1318.0</td>
+      <td>Residential</td>
+      <td>Thu May 15 00:00:00 EDT 2008</td>
+      <td>224000</td>
+      <td>38.631026</td>
+      <td>-121.501879</td>
+    </tr>
+    <tr>
+      <th>971</th>
+      <td>3528 SAINT GEORGE DR</td>
+      <td>SACRAMENTO</td>
+      <td>95821</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>1.0</td>
+      <td>1040.0</td>
+      <td>Residential</td>
+      <td>Thu May 15 00:00:00 EDT 2008</td>
+      <td>224000</td>
+      <td>38.629468</td>
+      <td>-121.376445</td>
+    </tr>
+    <tr>
+      <th>972</th>
+      <td>7381 WASHBURN WAY</td>
+      <td>NORTH HIGHLANDS</td>
+      <td>95660</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>1.0</td>
+      <td>960.0</td>
+      <td>Residential</td>
+      <td>Thu May 15 00:00:00 EDT 2008</td>
+      <td>224252</td>
+      <td>38.703550</td>
+      <td>-121.375103</td>
+    </tr>
+    <tr>
+      <th>974</th>
+      <td>7540 HICKORY AVE</td>
+      <td>ORANGEVALE</td>
+      <td>95662</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>1.0</td>
+      <td>1456.0</td>
+      <td>Residential</td>
+      <td>Thu May 15 00:00:00 EDT 2008</td>
+      <td>225000</td>
+      <td>38.703056</td>
+      <td>-121.235221</td>
+    </tr>
+    <tr>
+      <th>975</th>
+      <td>5024 CHAMBERLIN CIR</td>
+      <td>ELK GROVE</td>
+      <td>95757</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>2.0</td>
+      <td>1450.0</td>
+      <td>Residential</td>
+      <td>Thu May 15 00:00:00 EDT 2008</td>
+      <td>228000</td>
+      <td>38.389756</td>
+      <td>-121.446246</td>
+    </tr>
+    <tr>
+      <th>977</th>
+      <td>5 BISHOPGATE CT</td>
+      <td>SACRAMENTO</td>
+      <td>95823</td>
+      <td>CA</td>
+      <td>4.0</td>
+      <td>2.0</td>
+      <td>1329.0</td>
+      <td>Residential</td>
+      <td>Thu May 15 00:00:00 EDT 2008</td>
+      <td>229500</td>
+      <td>38.467936</td>
+      <td>-121.445477</td>
+    </tr>
+    <tr>
+      <th>978</th>
+      <td>5601 REXLEIGH DR</td>
+      <td>SACRAMENTO</td>
+      <td>95823</td>
+      <td>CA</td>
+      <td>4.0</td>
+      <td>2.0</td>
+      <td>1715.0</td>
+      <td>Residential</td>
+      <td>Thu May 15 00:00:00 EDT 2008</td>
+      <td>230000</td>
+      <td>38.445342</td>
+      <td>-121.441504</td>
+    </tr>
+    <tr>
+      <th>979</th>
+      <td>1909 YARNELL WAY</td>
+      <td>ELK GROVE</td>
+      <td>95758</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>2.0</td>
+      <td>1262.0</td>
+      <td>Residential</td>
+      <td>Thu May 15 00:00:00 EDT 2008</td>
+      <td>230000</td>
+      <td>38.417382</td>
+      <td>-121.484325</td>
+    </tr>
+    <tr>
+      <th>980</th>
+      <td>9169 GARLINGTON CT</td>
+      <td>SACRAMENTO</td>
+      <td>95829</td>
+      <td>CA</td>
+      <td>4.0</td>
+      <td>3.0</td>
+      <td>2280.0</td>
+      <td>Residential</td>
+      <td>Thu May 15 00:00:00 EDT 2008</td>
+      <td>232425</td>
+      <td>38.457679</td>
+      <td>-121.359620</td>
+    </tr>
+    <tr>
+      <th>981</th>
+      <td>6932 RUSKUT WAY</td>
+      <td>SACRAMENTO</td>
+      <td>95823</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>2.0</td>
+      <td>1477.0</td>
+      <td>Residential</td>
+      <td>Thu May 15 00:00:00 EDT 2008</td>
+      <td>234000</td>
+      <td>38.499893</td>
+      <td>-121.458890</td>
+    </tr>
+    <tr>
+      <th>982</th>
+      <td>7933 DAFFODIL WAY</td>
+      <td>CITRUS HEIGHTS</td>
+      <td>95610</td>
+      <td>CA</td>
+      <td>3.0</td>
+      <td>2.0</td>
+      <td>1216.0</td>
+      <td>Residential</td>
+      <td>Thu May 15 00:00:00 EDT 2008</td>
+      <td>235000</td>
+      <td>38.708824</td>
+      <td>-121.256803</td>
+    </tr>
+    <tr>
+      <th>983</th>
+      <td>8304 RED FOX WAY</td>
+      <td>ELK GROVE</td>
+      <td>95758</td>
+      <td>CA</td>
+      <td>4.0</td>
+      <td>2.0</td>
+      <td>1685.0</td>
+      <td>Residential</td>
+      <td>Thu May 15 00:00:00 EDT 2008</td>
+      <td>235301</td>
+      <td>38.417000</td>
+      <td>-121.397424</td>
+    </tr>
+  </tbody>
+</table>
+<p>856 rows × 12 columns</p>
+</div>
  </div>
 </div>
  </div>
