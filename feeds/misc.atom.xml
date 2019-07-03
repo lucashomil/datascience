@@ -345,7 +345,7 @@ Imagine that you got a dataset with hundreds of variables and you do not know if
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;h6&gt;Check our Data … Quickly&lt;/h6&gt;
+&lt;p&gt;Check our Data … Quickly&lt;/p&gt;
 &lt;p&gt;The first thing you want to do when you get a new dataset, is to quickly to verify the contents with the .head(), .info(), .describe() methods.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;df&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;pd&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;read_csv&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sac_csv&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;span class="n"&gt;df&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;head&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
@@ -467,8 +467,7 @@ Imagine that you got a dataset with hundreds of variables and you do not know if
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;df&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;info&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
 
 &lt;span class="c1"&gt;# Now let’s quickly see the names and types of the columns. &lt;/span&gt;
-&lt;span class="c1"&gt;# Most of the time you’re going get data that is not quite what you expected, &lt;/span&gt;
-&lt;span class="c1"&gt;# such as dates which are actually strings and other oddities. But to check upfront.&lt;/span&gt;
+&lt;span class="c1"&gt;# Most of the time you’re going get data that is not quite what you expected&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
@@ -494,7 +493,7 @@ Imagine that you got a dataset with hundreds of variables and you do not know if
 
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;df&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;describe&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
 
-&lt;span class="c1"&gt;# We find that &amp;#39;Sq_ft&amp;#39; and &amp;#39;price&amp;#39; have negative values&lt;/span&gt;
+&lt;span class="c1"&gt;# We find that &amp;#39;Sq_ft&amp;#39; and &amp;#39;price&amp;#39; have negative values. Take a look and min values.&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
@@ -1129,7 +1128,7 @@ Imagine that you got a dataset with hundreds of variables and you do not know if
 &lt;/table&gt;
 &lt;/div&gt;
 
-&lt;h6&gt;Sometimes, we have to explore the data set in order to understand every single value in cells&lt;/h6&gt;
+&lt;p&gt;Sometimes, we have to explore the data set in order to understand every single value in cells&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="c1"&gt;# latitude range [-90, 90]&lt;/span&gt;
 &lt;span class="c1"&gt;# Longtitude range [-180, 180]&lt;/span&gt;
 
@@ -1881,11 +1880,12 @@ Imagine that you got a dataset with hundreds of variables and you do not know if
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;h6&gt;After some work, our dataframe looks much nicer.&lt;/h6&gt;
+&lt;p&gt;After some work, our dataframe looks much nicer.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;df&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;head&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
+&lt;p&gt;s&lt;/p&gt;
 &lt;div&gt;
 &lt;style scoped&gt;
     .dataframe tbody tr th:only-of-type {

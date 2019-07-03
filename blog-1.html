@@ -28,7 +28,7 @@
 </pre></div>
 
 
-<h6>Check our Data … Quickly</h6>
+<p>Check our Data … Quickly</p>
 <p>The first thing you want to do when you get a new dataset, is to quickly to verify the contents with the .head(), .info(), .describe() methods.</p>
 <div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">sac_csv</span><span class="p">)</span>
 <span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
@@ -150,8 +150,7 @@
 <div class="highlight"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
 
 <span class="c1"># Now let’s quickly see the names and types of the columns. </span>
-<span class="c1"># Most of the time you’re going get data that is not quite what you expected, </span>
-<span class="c1"># such as dates which are actually strings and other oddities. But to check upfront.</span>
+<span class="c1"># Most of the time you’re going get data that is not quite what you expected</span>
 </pre></div>
 
 
@@ -177,7 +176,7 @@
 
 <div class="highlight"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
 
-<span class="c1"># We find that &#39;Sq_ft&#39; and &#39;price&#39; have negative values</span>
+<span class="c1"># We find that &#39;Sq_ft&#39; and &#39;price&#39; have negative values. Take a look and min values.</span>
 </pre></div>
 
 
@@ -812,7 +811,7 @@
 </table>
 </div>
 
-<h6>Sometimes, we have to explore the data set in order to understand every single value in cells</h6>
+<p>Sometimes, we have to explore the data set in order to understand every single value in cells</p>
 <div class="highlight"><pre><span></span><span class="c1"># latitude range [-90, 90]</span>
 <span class="c1"># Longtitude range [-180, 180]</span>
 
@@ -1564,11 +1563,12 @@
 </pre></div>
 
 
-<h6>After some work, our dataframe looks much nicer.</h6>
+<p>After some work, our dataframe looks much nicer.</p>
 <div class="highlight"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
 </pre></div>
 
 
+<p>s</p>
 <div>
 <style scoped>
     .dataframe tbody tr th:only-of-type {
