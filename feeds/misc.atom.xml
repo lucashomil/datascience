@@ -1,26 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Welcome to my blog - misc</title><link href="%20https://lucashomil.github.io/datascience/" rel="alternate"></link><link href="%20https:/lucashomil.github.io/datascience/feeds/misc.atom.xml" rel="self"></link><id> https://lucashomil.github.io/datascience/</id><updated>2019-06-28T10:20:00-04:00</updated><entry><title>Automated Feature Selection</title><link href="%20https:/lucashomil.github.io/datascience/blog-2.html" rel="alternate"></link><published>2019-06-28T10:20:00-04:00</published><updated>2019-06-28T10:20:00-04:00</updated><author><name>Lucas Ho</name></author><id>tag:None,2019-06-28: https:/lucashomil.github.io/datascience/blog-2.html</id><summary type="html">&lt;p&gt;In our projects, we often deal with datasets containing many variables. Some of them may decrease the accuracy of models. Today, I am going to show you some automatic ways of selecting relevant features.
-Imagine that you got a dataset with hundreds of variables and you do not know if …&lt;/p&gt;</summary><content type="html">&lt;p&gt;In our projects, we often deal with datasets containing many variables. Some of them may decrease the accuracy of models. Today, I am going to show you some automatic ways of selecting relevant features.
-Imagine that you got a dataset with hundreds of variables and you do not know if all of them are relevant in the predictive modelling problem.&lt;/p&gt;
-&lt;p&gt;Feature engineering is an essential parameter of a successful model as observed below:&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Welcome to my blog - misc</title><link href="%20https://lucashomil.github.io/datascience/" rel="alternate"></link><link href="%20https:/lucashomil.github.io/datascience/feeds/misc.atom.xml" rel="self"></link><id> https://lucashomil.github.io/datascience/</id><updated>2019-06-28T10:20:00-04:00</updated><entry><title>Automated Feature Selection</title><link href="%20https:/lucashomil.github.io/datascience/blog-2.html" rel="alternate"></link><published>2019-06-28T10:20:00-04:00</published><updated>2019-06-28T10:20:00-04:00</updated><author><name>Lucas Ho</name></author><id>tag:None,2019-06-28: https:/lucashomil.github.io/datascience/blog-2.html</id><summary type="html">&lt;p&gt;In our projects, we often deal with datasets containing many features. Some of them may decrease the accuracy of models. In this blog, I am going to show you some automatic ways of selecting relevant features.
+Imagine that you got a dataset with hundreds of features and you do not …&lt;/p&gt;</summary><content type="html">&lt;p&gt;In our projects, we often deal with datasets containing many features. Some of them may decrease the accuracy of models. In this blog, I am going to show you some automatic ways of selecting relevant features.
+Imagine that you got a dataset with hundreds of features and you do not know if all of them are relevant in the predictive modeling problem.&lt;/p&gt;
 &lt;p&gt;The process of identifying or excluding not necessary variables is called feature selection and in most scenarios it is defined through an automated algorithm.&lt;/p&gt;
 &lt;p&gt;Why feature selection makes our approach more efficient:
-    - It helps to avoid overfitting as less redundant data is present after feature selection.
-    - It may increase prediction performance, as learning will concentrate only on meaningful data.
-    - It reduces execution time and is memory-efficient as there is less data to process.&lt;/p&gt;
-&lt;h1&gt;Univariate statistics&lt;/h1&gt;
-&lt;p&gt;Univariate statistics is a simple method which is by looking at each feature individually and running a statistical test to see whether it is related to the target. This method is also known as analysis of variance (ANOVA)&lt;/p&gt;
+    - Avoiding overfitting.
+    - Increasing prediction performance.
+    - Reducing execution time and increasing data memory-efficient.&lt;/p&gt;
+&lt;h1&gt;Warm Up&lt;/h1&gt;
 &lt;p&gt;We will use the Boston Housing Data as an example. Then, we create a new dataset that consists of the Boston Housing Data with an additional 25 completely random features.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;numpy&lt;/span&gt; &lt;span class="kn"&gt;as&lt;/span&gt; &lt;span class="nn"&gt;np&lt;/span&gt;
+
 &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;pandas&lt;/span&gt; &lt;span class="kn"&gt;as&lt;/span&gt; &lt;span class="nn"&gt;pd&lt;/span&gt;
 
 &lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sklearn.linear_model&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;LinearRegression&lt;/span&gt;
 
 &lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sklearn.model_selection&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;train_test_split&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
 
+&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sklearn.datasets&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;load_boston&lt;/span&gt;
 
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sklearn.datasets&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;load_boston&lt;/span&gt;
 &lt;span class="n"&gt;boston&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;load_boston&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
 
 &lt;span class="n"&gt;df&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;pd&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;DataFrame&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;boston&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;data&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
@@ -30,6 +28,8 @@ Imagine that you got a dataset with hundreds of variables and you do not know if
 &lt;span class="n"&gt;df&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;columns&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;boston&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;feature_names&lt;/span&gt;
 
 &lt;span class="n"&gt;df&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;Price&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;boston&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;target&lt;/span&gt;
+
+&lt;span class="c1"&gt;# Adding some noise data&lt;/span&gt;
 
 &lt;span class="n"&gt;noise&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;pd&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;DataFrame&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;random&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;randint&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;100&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;size&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;len&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;boston&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;data&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="mi"&gt;25&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;
 
@@ -133,33 +133,26 @@ Imagine that you got a dataset with hundreds of variables and you do not know if
 &lt;/table&gt;
 &lt;/div&gt;
 
+&lt;p&gt;Split the data into train sub dataset and test sub dataset&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;X_train&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;X_test&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y_train&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y_test&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;train_test_split&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;X&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;train_size&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mf"&gt;0.5&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;test_size&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mf"&gt;0.5&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;random_state&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;42&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Univariate feature selection works by selecting the best features based on univariate statistical tests. It can be seen as a preprocessing step to an estimator. Scikit-learn exposes feature selection routines as objects that implement the transform method:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="nv"&gt;SelectKBest&lt;/span&gt; &lt;span class="nv"&gt;removes&lt;/span&gt; &lt;span class="nv"&gt;all&lt;/span&gt; &lt;span class="nv"&gt;but&lt;/span&gt; &lt;span class="nv"&gt;the&lt;/span&gt;  &lt;span class="nv"&gt;highest&lt;/span&gt; &lt;span class="nv"&gt;scoring&lt;/span&gt; &lt;span class="nv"&gt;features&lt;/span&gt;.
-
-&lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="nv"&gt;SelectPercentile&lt;/span&gt; &lt;span class="nv"&gt;removes&lt;/span&gt; &lt;span class="nv"&gt;all&lt;/span&gt; &lt;span class="nv"&gt;but&lt;/span&gt; &lt;span class="nv"&gt;a&lt;/span&gt; &lt;span class="nv"&gt;user&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="nv"&gt;specified&lt;/span&gt; &lt;span class="nv"&gt;highest&lt;/span&gt; &lt;span class="nv"&gt;scoring&lt;/span&gt; &lt;span class="nv"&gt;percentage&lt;/span&gt; &lt;span class="nv"&gt;of&lt;/span&gt; &lt;span class="nv"&gt;features&lt;/span&gt;.
-
-&lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="nv"&gt;Using&lt;/span&gt; &lt;span class="nv"&gt;common&lt;/span&gt; &lt;span class="nv"&gt;univariate&lt;/span&gt; &lt;span class="nv"&gt;statistical&lt;/span&gt; &lt;span class="nv"&gt;tests&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="nv"&gt;each&lt;/span&gt; &lt;span class="nv"&gt;feature&lt;/span&gt;: &lt;span class="nv"&gt;false&lt;/span&gt; &lt;span class="nv"&gt;positive&lt;/span&gt; &lt;span class="nv"&gt;rate&lt;/span&gt; &lt;span class="nv"&gt;SelectFpr&lt;/span&gt;, &lt;span class="nv"&gt;false&lt;/span&gt; &lt;span class="nv"&gt;discovery&lt;/span&gt; &lt;span class="nv"&gt;rate&lt;/span&gt; &lt;span class="nv"&gt;SelectFdr&lt;/span&gt;, &lt;span class="nv"&gt;or&lt;/span&gt; &lt;span class="nv"&gt;family&lt;/span&gt; &lt;span class="nv"&gt;wise&lt;/span&gt; &lt;span class="nv"&gt;error&lt;/span&gt; &lt;span class="nv"&gt;SelectFwe&lt;/span&gt;.
-&lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="nv"&gt;GenericUnivariateSelect&lt;/span&gt; &lt;span class="nv"&gt;allows&lt;/span&gt; &lt;span class="nv"&gt;to&lt;/span&gt; &lt;span class="nv"&gt;perform&lt;/span&gt; &lt;span class="nv"&gt;univariate&lt;/span&gt; &lt;span class="nv"&gt;feature&lt;/span&gt; &lt;span class="nv"&gt;selection&lt;/span&gt; &lt;span class="nv"&gt;with&lt;/span&gt; &lt;span class="nv"&gt;a&lt;/span&gt; &lt;span class="nv"&gt;configurable&lt;/span&gt; &lt;span class="nv"&gt;strategy&lt;/span&gt;. &lt;span class="nv"&gt;This&lt;/span&gt; &lt;span class="nv"&gt;allows&lt;/span&gt; &lt;span class="nv"&gt;to&lt;/span&gt; &lt;span class="nv"&gt;select&lt;/span&gt; &lt;span class="nv"&gt;the&lt;/span&gt; &lt;span class="nv"&gt;best&lt;/span&gt; &lt;span class="nv"&gt;univariate&lt;/span&gt; &lt;span class="nv"&gt;selection&lt;/span&gt; &lt;span class="nv"&gt;strategy&lt;/span&gt; &lt;span class="nv"&gt;with&lt;/span&gt; &lt;span class="nv"&gt;hyper&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="nv"&gt;parameter&lt;/span&gt; &lt;span class="nv"&gt;search&lt;/span&gt; &lt;span class="nv"&gt;estimator&lt;/span&gt;.
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;We have to define a threshold on the p-value of the statistical test to decide how many features to keep. There are several strategies implemented in scikit-learn, a straight-forward one being SelectPercentile, which selects a percentile of the original features.&lt;/p&gt;
+&lt;p&gt;Now, we are ready to look at some methods to select important features from the dataset and discuss types of feature selection algorithms in Python using the Scikit-learn.&lt;/p&gt;
+&lt;h1&gt;Univariate statistics&lt;/h1&gt;
+&lt;p&gt;Univariate statistics is a simple method which is by looking at each feature individually and running a statistical test to see whether it is related to the target. This method is also known as analysis of variance (ANOVA)&lt;/p&gt;
+&lt;p&gt;Univariate feature selection works by selecting the strongest relationship features with the target variable based on statistical tests. Scikit-learn library is used to select a specific number of relevant features and provides different statistical tests such as SelectPercentile, SelectKBest, GenericUnivariateSelect, etc.&lt;/p&gt;
+&lt;p&gt;In this case, SelectPercentile is used to decide how many features will be kept, which selects a percentile of the original features. Thereby, we have to determine a threshold on the p-value.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sklearn.feature_selection&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;SelectPercentile&lt;/span&gt;
 
-&lt;span class="c1"&gt;# use f_classif (the default) and SelectPercentile to select percentile = 15:&lt;/span&gt;
-
 &lt;span class="n"&gt;select&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;SelectPercentile&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;percentile&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;15&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="n"&gt;select&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;fit&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;X_train&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y_train&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 
-&lt;span class="c1"&gt;# # transform training set:&lt;/span&gt;
+&lt;span class="n"&gt;select&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;fit&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;X_train&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y_train&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 
 &lt;span class="n"&gt;X_train_selected&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;select&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;transform&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;X_train&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 
 &lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;X_train&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;shape&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
 &lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;X_train_selected&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;shape&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 
 &lt;span class="n"&gt;select&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get_support&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
@@ -181,13 +174,8 @@ Imagine that you got a dataset with hundreds of variables and you do not know if
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;These objects take as input a scoring function that returns univariate scores and p-values (or only scores for SelectKBest and SelectPercentile):&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="k"&gt;For&lt;/span&gt; &lt;span class="nv"&gt;regression&lt;/span&gt;: &lt;span class="nv"&gt;f_regression&lt;/span&gt;, &lt;span class="nv"&gt;mutual_info_regression&lt;/span&gt;
-&lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="k"&gt;For&lt;/span&gt; &lt;span class="nv"&gt;classification&lt;/span&gt;: &lt;span class="nv"&gt;chi2&lt;/span&gt;, &lt;span class="nv"&gt;f_classif&lt;/span&gt;, &lt;span class="nv"&gt;mutual_info_classif&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;The methods based on F-test estimate the degree of linear dependency between two random variables. On the other hand, mutual information methods can capture any kind of statistical dependency, but being nonparametric, they require more samples for accurate estimation.&lt;/p&gt;
+&lt;p&gt;As the Boston Housing Dataset is a regression task, f_regression is used to determine univariate scores and p-values. Moreover, for classification, chi2, f_classif, mutual_info_classif are used as input a scoring function.&lt;/p&gt;
+&lt;p&gt;We plot the p-values associated with each of all the features (original features + 25 noise features). Low p-values indicate informative features.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sklearn.feature_selection&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;f_classif&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;f_regression&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;chi2&lt;/span&gt;
 
 &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;matplotlib.pyplot&lt;/span&gt; &lt;span class="kn"&gt;as&lt;/span&gt; &lt;span class="nn"&gt;plt&lt;/span&gt;
@@ -197,19 +185,23 @@ Imagine that you got a dataset with hundreds of variables and you do not know if
 &lt;span class="n"&gt;F&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;p&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;f_regression&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;X_train&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y_train&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 
 &lt;span class="n"&gt;plt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;figure&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+
 &lt;span class="n"&gt;plt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;plot&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;o&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;matplotlib&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;lines&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Line2D&lt;/span&gt; &lt;span class="k"&gt;at&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="n"&gt;x1bf8bbc7278&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;matplotlib&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;lines&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Line2D&lt;/span&gt; &lt;span class="k"&gt;at&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="n"&gt;x297a5407860&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;&lt;img alt="png" src="images/output_13_1.png"&gt;&lt;/p&gt;
-&lt;p&gt;Going back to the SelectPercentile transformer, we can obtain the features that are selected using the get_support method:&lt;/p&gt;
+&lt;p&gt;&lt;img alt="png" src="images/output_16_1.png"&gt;&lt;/p&gt;
+&lt;p&gt;We can obtain the features that are selected using the get_support method&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;mask&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;select&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get_support&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+
 &lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;mask&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
 &lt;span class="c1"&gt;# visualize the mask. black is True, white is False&lt;/span&gt;
+
 &lt;span class="n"&gt;plt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;matshow&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;mask&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;reshape&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;cmap&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;gray_r&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
@@ -223,15 +215,13 @@ Imagine that you got a dataset with hundreds of variables and you do not know if
 
 
 
-&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;matplotlib&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;image&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;AxesImage&lt;/span&gt; &lt;span class="k"&gt;at&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="n"&gt;x1bf8bc65240&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
+&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;matplotlib&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;image&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;AxesImage&lt;/span&gt; &lt;span class="k"&gt;at&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="n"&gt;x297a5787128&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;&lt;img alt="png" src="images/output_15_2.png"&gt;&lt;/p&gt;
-&lt;p&gt;It's important to learn the feature selection only on the training set!&lt;/p&gt;
+&lt;p&gt;&lt;img alt="png" src="images/output_18_2.png"&gt;&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sklearn.linear_model&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;LinearRegression&lt;/span&gt;
 
-&lt;span class="c1"&gt;# transform test data:&lt;/span&gt;
 &lt;span class="n"&gt;X_test_selected&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;select&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;transform&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;X_test&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 
 &lt;span class="n"&gt;ln&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;LinearRegression&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
@@ -246,7 +236,7 @@ Imagine that you got a dataset with hundreds of variables and you do not know if
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;Score&lt;/span&gt; &lt;span class="k"&gt;with&lt;/span&gt; &lt;span class="k"&gt;all&lt;/span&gt; &lt;span class="n"&gt;features&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;6562323137037431&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;Score&lt;/span&gt; &lt;span class="k"&gt;with&lt;/span&gt; &lt;span class="k"&gt;all&lt;/span&gt; &lt;span class="n"&gt;features&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;6276409952008808&lt;/span&gt;
 &lt;span class="n"&gt;Score&lt;/span&gt; &lt;span class="k"&gt;with&lt;/span&gt; &lt;span class="k"&gt;only&lt;/span&gt; &lt;span class="n"&gt;selected&lt;/span&gt; &lt;span class="n"&gt;features&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;6056841906269855&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
@@ -256,6 +246,7 @@ Imagine that you got a dataset with hundreds of variables and you do not know if
 &lt;p&gt;Moreover, the obvious example is linear regression, which works by applying a coefficient multiplier to each of the features. Obviously, the higher the coefficient, the more valuable the feature.&lt;/p&gt;
 &lt;p&gt;To present model-based selection in scikit-learn, you can use "SelectFromModel" in conjunction with different models. Any of these models can be made into a transformer that does feature selection by wrapping it with the SelectFromModel class:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sklearn.feature_selection&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;SelectFromModel&lt;/span&gt;
+
 &lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sklearn.ensemble&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;RandomForestRegressor&lt;/span&gt;
 
 &lt;span class="n"&gt;select&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;SelectFromModel&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;RandomForestRegressor&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;n_estimators&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;100&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;random_state&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;42&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;max_features&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;15&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
@@ -263,8 +254,11 @@ Imagine that you got a dataset with hundreds of variables and you do not know if
 
 
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;select&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;fit&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;X_train&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y_train&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
 &lt;span class="n"&gt;X_train_rf&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;select&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;transform&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;X_train&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
 &lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;X_train&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;shape&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
 &lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;X_train_rf&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;shape&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
@@ -275,17 +269,20 @@ Imagine that you got a dataset with hundreds of variables and you do not know if
 
 
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;mask&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;select&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get_support&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+
 &lt;span class="c1"&gt;# visualize the mask. black is True, white is False&lt;/span&gt;
+
 &lt;span class="n"&gt;plt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;matshow&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;mask&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;reshape&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;cmap&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;gray_r&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;matplotlib&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;image&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;AxesImage&lt;/span&gt; &lt;span class="k"&gt;at&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="n"&gt;x1bf8c26b668&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;matplotlib&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;image&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;AxesImage&lt;/span&gt; &lt;span class="k"&gt;at&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="n"&gt;x297a5d7bcf8&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;&lt;img alt="png" src="images/output_22_1.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="png" src="images/output_24_1.png"&gt;&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;X_test_rf&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;select&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;transform&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;X_test&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
 &lt;span class="n"&gt;LinearRegression&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;fit&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;X_train_rf&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y_train&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;score&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;X_test_rf&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y_test&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
@@ -298,28 +295,32 @@ Imagine that you got a dataset with hundreds of variables and you do not know if
 &lt;p&gt;Recursive Feature Elimination is similar to the methods above which selects a important features that are deemed most important by the model. In simple term, it is a backward selection of the variables. Literally, this technique begins by building a model on the entire set of variables and computing an importance score for each variable. The least important variables are removed, the model is re-built, and importance scores are computed again. &lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sklearn.feature_selection&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;RFE&lt;/span&gt;
 
-&lt;span class="n"&gt;select&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;RFE&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;RandomForestRegressor&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;n_estimators&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;100&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;random_state&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;42&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;n_features_to_select&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;15&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;select&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;RFE&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;RandomForestRegressor&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;n_estimators&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;40&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;random_state&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;42&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;n_features_to_select&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;13&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 
-&lt;span class="n"&gt;select&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;fit&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;X_train&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y_train&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;fit&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;select&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;fit&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;X_train&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y_train&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
 &lt;span class="c1"&gt;# visualize the selected features:&lt;/span&gt;
+
 &lt;span class="n"&gt;mask&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;select&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get_support&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+
 &lt;span class="n"&gt;plt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;matshow&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;mask&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;reshape&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;cmap&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;gray_r&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;matplotlib&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;image&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;AxesImage&lt;/span&gt; &lt;span class="k"&gt;at&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="n"&gt;x1bf8c2ce3c8&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;matplotlib&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;image&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;AxesImage&lt;/span&gt; &lt;span class="k"&gt;at&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="n"&gt;x297a5ddae80&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;&lt;img alt="png" src="images/output_26_1.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="png" src="images/output_28_1.png"&gt;&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;X_train_rfe&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;select&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;transform&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;X_train&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
 &lt;span class="n"&gt;X_test_rfe&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;select&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;transform&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;X_test&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 
 &lt;span class="n"&gt;LinearRegression&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;fit&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;X_train_rfe&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y_train&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;score&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;X_test_rfe&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y_test&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;6615123564812166&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;6587309225824689&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
@@ -327,11 +328,31 @@ Imagine that you got a dataset with hundreds of variables and you do not know if
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;797557145968709&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;812742249823327&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;The advantage of this approach is that it will not remove variables which were deemed insignificant at the beginning of the process, but become more and more significant as lesser features are removed. For datasets with many variables relatively strongly correlated with one another and relatively weakly correlated with the target variable, this approach may result in slightly different feature choices from those made by model-based selection. The disadvantage is that since you have to train the model many times, this approach is multiplicatively slower than the one-and-done.&lt;/p&gt;</content><category term="python"></category></entry><entry><title>Data Cleaning</title><link href="%20https:/lucashomil.github.io/datascience/blog-1.html" rel="alternate"></link><published>2019-06-13T10:20:00-04:00</published><updated>2019-06-13T10:20:00-04:00</updated><author><name>Lucas Ho</name></author><id>tag:None,2019-06-13: https:/lucashomil.github.io/datascience/blog-1.html</id><summary type="html">&lt;p&gt;Let me tell you one of the biggest misconceptions aspiring data science newbies have nowadays. Real-world work is not something that the newbies think while studying in school. Unfortunately, you will surprise that the real-world projects give you a headache with data cleaning. In fact, 70%-80% of your time …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Let me tell you one of the biggest misconceptions aspiring data science newbies have nowadays. Real-world work is not something that the newbies think while studying in school. Unfortunately, you will surprise that the real-world projects give you a headache with data cleaning. In fact, 70%-80% of your time should just be collecting and cleaning data. You have to work with messy and unclean data. And, it is something that eventually becomes part of your routine work.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Num Features: &lt;/span&gt;&lt;span class="si"&gt;%d&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;%&lt;/span&gt; &lt;span class="n"&gt;fit&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;n_features_&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;Num&lt;/span&gt; &lt;span class="n"&gt;Features&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;13&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Feature Ranking: &lt;/span&gt;&lt;span class="si"&gt;%s&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;%&lt;/span&gt; &lt;span class="n"&gt;fit&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;ranking_&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;Feature&lt;/span&gt; &lt;span class="n"&gt;Ranking&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="mi"&gt;25&lt;/span&gt; &lt;span class="mi"&gt;16&lt;/span&gt; &lt;span class="mi"&gt;26&lt;/span&gt;  &lt;span class="mi"&gt;1&lt;/span&gt;  &lt;span class="mi"&gt;1&lt;/span&gt;  &lt;span class="mi"&gt;1&lt;/span&gt;  &lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="mi"&gt;18&lt;/span&gt;  &lt;span class="mi"&gt;1&lt;/span&gt;  &lt;span class="mi"&gt;1&lt;/span&gt;  &lt;span class="mi"&gt;1&lt;/span&gt;  &lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="mi"&gt;17&lt;/span&gt;  &lt;span class="mi"&gt;5&lt;/span&gt; &lt;span class="mi"&gt;22&lt;/span&gt;  &lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="mi"&gt;15&lt;/span&gt; &lt;span class="mi"&gt;21&lt;/span&gt;  &lt;span class="mi"&gt;6&lt;/span&gt;  &lt;span class="mi"&gt;4&lt;/span&gt;  &lt;span class="mi"&gt;1&lt;/span&gt;  &lt;span class="mi"&gt;3&lt;/span&gt;  &lt;span class="mi"&gt;1&lt;/span&gt;
+ &lt;span class="mi"&gt;13&lt;/span&gt; &lt;span class="mi"&gt;10&lt;/span&gt; &lt;span class="mi"&gt;11&lt;/span&gt;  &lt;span class="mi"&gt;1&lt;/span&gt;  &lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="mi"&gt;14&lt;/span&gt; &lt;span class="mi"&gt;20&lt;/span&gt; &lt;span class="mi"&gt;24&lt;/span&gt; &lt;span class="mi"&gt;23&lt;/span&gt;  &lt;span class="mi"&gt;9&lt;/span&gt; &lt;span class="mi"&gt;12&lt;/span&gt;  &lt;span class="mi"&gt;7&lt;/span&gt; &lt;span class="mi"&gt;19&lt;/span&gt;  &lt;span class="mi"&gt;8&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;You can see that RFE chose the the top 13 features. These are marked with a choice 1 in the ranking_ array.&lt;/p&gt;
+&lt;p&gt;The advantage of this approach is that it will not remove variables which were deemed insignificant at the beginning of the process, but become more and more significant as lesser features are removed. For datasets with many variables relatively strongly correlated with one another and relatively weakly correlated with the target variable, this approach may result in slightly different feature choices from those made by model-based selection. The disadvantage is that since you have to train the model many times, this approach is multiplicatively slower than the one-and-done.&lt;/p&gt;
+&lt;h1&gt;Conclusion&lt;/h1&gt;
+&lt;p&gt;Feature engineering is an essential parameter of a successful model. Now, we can see how important feature selection is. In order to increase the accuracy of the model, data visualization and feature selection methods are a nice tool for you to approach the mission.&lt;/p&gt;</content><category term="python"></category></entry><entry><title>Data Cleaning</title><link href="%20https:/lucashomil.github.io/datascience/blog-1.html" rel="alternate"></link><published>2019-06-13T10:20:00-04:00</published><updated>2019-06-13T10:20:00-04:00</updated><author><name>Lucas Ho</name></author><id>tag:None,2019-06-13: https:/lucashomil.github.io/datascience/blog-1.html</id><summary type="html">&lt;p&gt;Let me tell you one of the biggest misconceptions aspiring data science newbies have nowadays. Real-world work is not something that the newbies think while studying in school. Unfortunately, you will surprise that the real-world projects give you a headache with data cleaning. In fact, 70%-80% of your time …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Let me tell you one of the biggest misconceptions aspiring data science newbies have nowadays. Real-world work is not something that the newbies think while studying in school. Unfortunately, you will surprise that the real-world projects give you a headache with data cleaning. In fact, 70%-80% of your time should just be collecting and cleaning data. You have to work with messy and unclean data. And, it is something that eventually becomes part of your routine work.&lt;/p&gt;
 &lt;p&gt;In school, we could be provided datasets which are clean and spotless. For example, hackathons and Kaggle have a good database that we can download them and start working on the problem. Moreover, accuracy is not always the primary goal. Sometimes, you don’t really need a result as 1 plus 1 equal 2. Your boss just might want to know how you can optimize your algorithm for impact, not for the increasing of accuracy. &lt;/p&gt;
 &lt;p&gt;Therefore, you should know how to deal with messy data, whether that means missing values, inconsistent formatting, malformed records, or nonsensical outliers, etc. In this blog, I’ll leverage Python’s Pandas and NumPy libraries to clean data.&lt;/p&gt;
 &lt;p&gt;We will use a data set on Sacramento real estate sales as an example. The data set contains information on qualities of the property, location of the property, and time of sale.&lt;/p&gt;
