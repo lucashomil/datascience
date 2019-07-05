@@ -1,20 +1,62 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
- <title>Automated Feature Selection</title>
- <!-- Latest compiled and minified CSS -->
- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
- <div class="container">
-  <h1><a href=" https://lucashomil.github.io/datascience">Welcome to my blog</a></h1>
- </div>
-</head>
-<body>
- <div class="container">
-<div class="row">
- <div class="col-md-8">
-  <h3>Automated Feature Selection</h3>
-  <label>2019-06-28</label>
-  <p>In our projects, we often deal with datasets containing many features. Some of them may decrease the accuracy of models. In this blog, I am going to show you some automatic ways of selecting relevant features.
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>    Automated Feature Selection
+</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width">
+            <link rel="stylesheet" href=" https://lucashomil.github.io/datascience/theme/css/normalize.css">
+        <link href='//fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+        <link href='//fonts.googleapis.com/css?family=Oswald' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href=" https://lucashomil.github.io/datascience/theme/css/font-awesome.min.css">
+        <link rel="stylesheet" href=" https://lucashomil.github.io/datascience/theme/css/main.css">
+
+    <link rel="stylesheet" href=" https://lucashomil.github.io/datascience/theme/css/blog.css">
+    <link rel="stylesheet" href=" https://lucashomil.github.io/datascience/theme/css/github.css">
+        <link href=" https://lucashomil.github.io/datascience/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Welcome to my blog Atom Feed" />
+        <script src=" https://lucashomil.github.io/datascience/theme/js/vendor/modernizr-2.6.2.min.js"></script>
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+        <![endif]-->
+
+        <div id="wrapper">
+<header id="sidebar" class="side-shadow">
+    <hgroup id="site-header">
+        <a id="site-title" href=" https://lucashomil.github.io/datascience"><h1><i class="icon-coffee"></i> Welcome to my blog</h1></a>
+        <p id="site-desc"></p>
+    </hgroup>
+    <nav>
+        <ul id="nav-links">
+        </ul>
+    </nav>
+<footer id="site-info">
+    <p>
+        Proudly powered by <a href="http://getpelican.com/" target="pelican">Pelican</a> and <a href="http://python.org/" target="python">Python</a>. Theme by <a href="https://github.com/hdra/pelican-cait" target="github">hndr</a>.
+    </p>
+    <p>
+        Textures by <a href="http://subtlepatterns.com/" target="subtlepatterns">Subtle Pattern</a>. Font Awesome by <a href="http://fortawesome.github.io/Font-Awesome/" target="github">Dave Grandy</a>.
+    </p>
+</footer></header>
+    <div id="post-container">
+        <ol id="post-list">
+            <li>
+                <article class="post-entry">
+                    <header class="entry-header">
+                        <time class="post-time" datetime="2019-06-28T10:20:00-04:00" pubdate>
+                            Fri 28 June 2019
+                        </time>
+                        <a href=" https://lucashomil.github.io/datascience/blog-2.html" rel="bookmark"><h1>Automated Feature Selection</h1></a>
+                    </header>
+
+                    <section class="post-content">
+                        <p>In our projects, we often deal with datasets containing many features. Some of them may decrease the accuracy of models. In this blog, I am going to show you some automatic ways of selecting relevant features.
 Imagine that you got a dataset with hundreds of features and you do not know if all of them are relevant in the predictive modeling problem.</p>
 <p>The process of identifying or excluding not necessary variables is called feature selection and in most scenarios it is defined through an automated algorithm.</p>
 <p>Why feature selection makes our approach more efficient:
@@ -367,8 +409,19 @@ Imagine that you got a dataset with hundreds of features and you do not know if 
 <p>The advantage of this approach is that it will not remove variables which were deemed insignificant at the beginning of the process, but become more and more significant as lesser features are removed. For datasets with many variables relatively strongly correlated with one another and relatively weakly correlated with the target variable, this approach may result in slightly different feature choices from those made by model-based selection. The disadvantage is that since you have to train the model many times, this approach is multiplicatively slower than the one-and-done.</p>
 <h2>Conclusion</h2>
 <p>Feature engineering is an essential parameter of a successful model. Now, we can see how important feature selection is. In order to increase the accuracy of the model, data visualization and feature selection methods are a nice tool for you to approach the mission.</p>
- </div>
-</div>
- </div>
-</body>
+                    </section>
+                    <hr/>
+                    <aside class="post-meta">
+                        <p>Category: <a href=" https://lucashomil.github.io/datascience/category/misc.html">misc</a></p>
+                        <p>Tags: <a href=" https://lucashomil.github.io/datascience/tag/python.html">python</a>, </p>
+                    </aside>
+                    <hr/>
+                </article>
+            </li>
+        </ol>
+    </div>
+        </div>
+
+        <script src=" https://lucashomil.github.io/datascience/theme/js/main.js"></script>
+    </body>
 </html>
