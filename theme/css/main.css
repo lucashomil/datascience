@@ -45,7 +45,8 @@ header {
   height: 85px;
   line-height: 50px;
   padding: 0 1em;
-  font-size: 40px;
+  font-size: 28px;
+  text-align: center;
 }
 
 .wrapper {
