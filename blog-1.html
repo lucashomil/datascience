@@ -1,62 +1,75 @@
-<!DOCTYPE html>
-<html lang="en" prefix="og: http://ogp.me/ns#">
-	<head>
-		<link href="http://gmpg.org/xfn/11" rel="profile">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
 
-		<!-- Metadata -->
-	<meta name="description" content="">
-	<meta property="og:description" content="">
-	<meta property="og:title" content="Data Cleaning" />
-	<meta property="og:type" content="article" />
-	<meta property="og:url" content=" https://lucashomil.github.io/datascience/blog-1.html" />
-		<meta property="og:image" content=" https://lucashomil.github.io/datascience/images/" />
+<head>
 
-		<!-- Enable responsiveness on mobile devices-->
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  
+  <title>Data Cleaning</title>
+<link href=" https://lucashomil.github.io/datascience/theme/css/style.css" rel="stylesheet" type="text/css" media="screen" />
+<link href=" https://lucashomil.github.io/datascience/" type="application/atom+xml" rel="alternate" title="Welcome to my blog ATOM Feed" />
+  
+  <!--[if IE]>
+  <style type="text/css"> 
+  .twoColFixRtHdr #mainContent { zoom: 1; }
+  </style>
+  <![endif]-->
 
-		<title>Welcome to my blog</title>
+</head>
 
-		<!-- CSS -->
-		<link href="//fonts.googleapis.com/" rel="dns-prefetch">
-		<link href="//fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic|Abril+Fatface|PT+Sans:400,400italic,700&amp;subset=latin,latin-ext" rel="stylesheet">
+<body>
 
-		<link rel="stylesheet" href=" https://lucashomil.github.io/datascience/theme/css/poole.css" />
-		<link rel="stylesheet" href=" https://lucashomil.github.io/datascience/theme/css/hyde.css" />
-		<link rel="stylesheet" href=" https://lucashomil.github.io/datascience/theme/css/syntax.css" />
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+<div id="container">
 
-		<!-- RSS -->
-		<link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
-	</head>
+  <div id="header">
+  <h1><a href=" https://lucashomil.github.io/datascience/index.html">Welcome to my blog</h1>
+  
+  </div><!-- end #header -->
+  
+  <div id="topMenu">
+  
+    <ul>
+    	<li><a href=" https://lucashomil.github.io/datascience/index.html">Home</a></li>
+        <li>&ndash;</li>
+        <li><a href=" https://lucashomil.github.io/datascience/archives.html">Archives</a></li>
+        
+    </ul>
+  
+  </div><!-- end #topMenu -->
 
-	<body class="theme-base-0d">
-<div class="sidebar">
-	<div class="container sidebar-sticky">
-		<div class="sidebar-about">
+  <div id="sidebar">
+    <ul>
+	<li>
+	    <h3>Pages</h3>
+	    <ul>
+	    </ul>
+	</li>
+	<li>
+            <h3>Categories</h3>
+            <ul>
+		     <li class="active"><a href=" https://lucashomil.github.io/datascience/category/misc.html">misc</a></li>
+	    </ul>
+	</li>
+        <li>
+            <h3>Tags</h3>
+            <ul>
+                    <li><a href=" https://lucashomil.github.io/datascience/tag/python.html">python</a></li>
+            </ul>
+        </li>
+    </ul>
+  </div><!-- end #sidebar -->
 
-			<h1>
-				<a href="/">
-					<img class="profile-picture" src=" https://lucashomil.github.io/datascience/images/">
-					Welcome to my blog
-				</a>
-			</h1>
-			<p class="lead"></p>
-			<p class="lead"> </p>
-			<p></p>
-		</div>
-		<nav class="sidebar-nav">
-			<a class="sidebar-nav-item" href="">
-				<i class="fa fa-feed"></i>
-			</a>
-		</nav>
-	</div>
-</div>		<div class="content container">
-<div class="post">
-	<h1 class="post-title">Data Cleaning</h1>
-	<span class="post-date">Thu 13 June 2019</span>
-	<p>Let me tell you one of the biggest misconceptions aspiring data science newbies have nowadays. Real-world work is not something that the newbies think while studying in school. Unfortunately, you will surprise that the real-world projects give you a headache with data cleaning. In fact, 70%-80% of your time should just be collecting and cleaning data. You have to work with messy and unclean data. And, it is something that eventually becomes part of your routine work.</p>
+  <div id="mainContent">
+  	
+ 
+
+
+<div class="blogItem">
+    
+      <h2><a href=" https://lucashomil.github.io/datascience/blog-1.html">Data Cleaning</a></h2>
+      <h3>Thu 13 June 2019</h3>
+      
+  <p>Let me tell you one of the biggest misconceptions aspiring data science newbies have nowadays. Real-world work is not something that the newbies think while studying in school. Unfortunately, you will surprise that the real-world projects give you a headache with data cleaning. In fact, 70%-80% of your time should just be collecting and cleaning data. You have to work with messy and unclean data. And, it is something that eventually becomes part of your routine work.</p>
 <p>In school, we could be provided datasets which are clean and spotless. For example, hackathons and Kaggle have a good database that we can download them and start working on the problem. Moreover, accuracy is not always the primary goal. Sometimes, you don’t really need a result as 1 plus 1 equal 2. Your boss just might want to know how you can optimize your algorithm for impact, not for the increasing of accuracy. </p>
 <p>Therefore, you should know how to deal with messy data, whether that means missing values, inconsistent formatting, malformed records, or nonsensical outliers, etc. In this blog, I’ll leverage Python’s Pandas and NumPy libraries to clean data.</p>
 <p>We will use a data set on Sacramento real estate sales as an example. The data set contains information on qualities of the property, location of the property, and time of sale.</p>
@@ -1694,8 +1707,25 @@
 </div>
 
 <p>Dealing with messy data is a pain. Data cleaning is very important because it is a part of the process on a data science project. In this blog, we went over some ways to detect, summarize, and replace odd values. Usually, we deal with NaN values, but in this blog, we got chance to treat zero values as NaN values.</p>
-<p>If you spend less time on data cleaning, you will have more time for exploring and modeling.</p>
-</div>
-		</div>
-	</body>
+<p>If you spend less time on data cleaning, you will have more time for exploring and modeling.</p>	
+      
+      <h3 class="blogMeta">By <a href="#">Lucas Ho</a>, Category: <a href=" https://lucashomil.github.io/datascience/category/misc.html">misc</a></h3>
+<h3 class="blogMeta">Tags: <span><a href=" https://lucashomil.github.io/datascience/tag/python.html">python</a> / </span>
+</h3>    
+    </div><!-- end #blogItem -->
+				
+				<!-- end #content -->
+  
+  </div><!-- end #mainContent -->
+
+<div class="clearfloat"></div>
+
+  <div id="footer">
+  
+    <p><a href="http://css4free.com/" title="free CSS web site designs">Free CSS Gallery</a></p>
+    <p>Proudly powered by <a href="http://getpelican.com">pelican</a>, which takes great advantages of <a href="http://python.org">python</a>.
+  </div><!-- end #footer -->
+
+</div><!-- end #container -->
+</body>
 </html>
