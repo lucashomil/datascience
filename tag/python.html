@@ -1,463 +1,95 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-
+<!doctype html>
+<html lang="">	
 <head>
+	<meta charset="utf-8"/>
+	<title>python - Welcome to my blog</title>	
+	<meta name="author" content="Lucas Ho">
+	
 
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  
-  <title>Welcome to my blog - python</title>
-<link href=" https://lucashomil.github.io/datascience/theme/css/style.css" rel="stylesheet" type="text/css" media="screen" />
-<link href=" https://lucashomil.github.io/datascience/" type="application/atom+xml" rel="alternate" title="Welcome to my blog ATOM Feed" />
-  
-  <!--[if IE]>
-  <style type="text/css"> 
-  .twoColFixRtHdr #mainContent { zoom: 1; }
-  </style>
-  <![endif]-->
+	<link rel="top" href="#" /><link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,300italic,400italic,600italic|Source+Code+Pro' rel='stylesheet' type='text/css'></link>
+	<link rel="stylesheet" href=" https://lucashomil.github.io/datascience/theme/css/main.css" type="text/css" />
+		
 
+    <link href=" https://lucashomil.github.io/datascience/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Welcome to my blog Atom Feed" />
 </head>
-
+	
 <body>
 
-<div id="container">
+    <div class="container">
+	  
+	  <header role="banner">
+	    <div class="feeds">
+	        <a href=" https://lucashomil.github.io/datascience/feeds/all.atom.xml" rel="alternate"><img src=" https://lucashomil.github.io/datascience/theme/images/icons/feed-32px.png" alt="atom feed"/></a>
+	    </div>
+	      <nav class="pages">
+	      </nav>
+		<a href=" https://lucashomil.github.io/datascience" class="title">Welcome to my blog</a>
+      </header>
+	
+	  <div class="wrapper">
 
-  <div id="header">
-  <h1><a href=" https://lucashomil.github.io/datascience/index.html">Welcome to my blog</h1>
-  
-  </div><!-- end #header -->
-  
-  <div id="topMenu">
-  
-    <ul>
-    	<li><a href=" https://lucashomil.github.io/datascience/index.html">Home</a></li>
-        <li>&ndash;</li>
-        <li><a href=" https://lucashomil.github.io/datascience/archives.html">Archives</a></li>
-        
-    </ul>
-  
-  </div><!-- end #topMenu -->
+		  <div role="main" class="content">
 
-  <div id="sidebar">
-    <ul>
-	<li>
-	    <h3>Pages</h3>
-	    <ul>
-	    </ul>
-	</li>
-	<li>
-            <h3>Categories</h3>
-            <ul>
-		     <li ><a href=" https://lucashomil.github.io/datascience/category/misc.html">misc</a></li>
-	    </ul>
-	</li>
-        <li>
-            <h3>Tags</h3>
-            <ul>
-                    <li><a href=" https://lucashomil.github.io/datascience/tag/python.html">python</a></li>
-            </ul>
-        </li>
-    </ul>
-  </div><!-- end #sidebar -->
+<h1>Post tagged: python</h1>
 
-  <div id="mainContent">
-  	
- 
-        
-  	
-    <div class="blogItem">
-    
-      <h2><a href=" https://lucashomil.github.io/datascience/blog-2.html">Automated Feature Selection</a></h2>
-      <h3>Fri 28 June 2019</h3>
-      
-      <p>In our projects, we often deal with datasets containing many features. Some of them may decrease the accuracy of models. In this blog, I am going to show you some automatic ways of selecting relevant features.
-Imagine that you got a dataset with hundreds of features and you do not know if all of them are relevant in the predictive modeling problem.</p>
-<p>The process of identifying or excluding not necessary variables is called feature selection and in most scenarios it is defined through an automated algorithm.</p>
-<p>Why feature selection makes our approach more efficient:
-    - Avoiding overfitting.
-    - Increasing prediction performance.
-    - Reducing execution time and increasing data memory-efficient.</p>
-<h2>Warm Up</h2>
-<p>We will use the Boston Housing Data as an example. Then, we create a new dataset that consists of the Boston Housing Data with an additional 25 completely random features.</p>
-<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
-
-<span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LinearRegression</span>
-
-<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
-
-<span class="kn">from</span> <span class="nn">sklearn.datasets</span> <span class="kn">import</span> <span class="n">load_boston</span>
-
-<span class="n">boston</span> <span class="o">=</span> <span class="n">load_boston</span><span class="p">()</span>
-
-<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">boston</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
-
-<span class="c1"># label columns</span>
-
-<span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">boston</span><span class="o">.</span><span class="n">feature_names</span>
-
-<span class="n">df</span><span class="p">[</span><span class="s1">&#39;Price&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">boston</span><span class="o">.</span><span class="n">target</span>
-
-<span class="c1"># Adding some noise data</span>
-
-<span class="n">noise</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">boston</span><span class="o">.</span><span class="n">data</span><span class="p">),</span> <span class="mi">25</span><span class="p">)))</span>
-
-<span class="n">X</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">&#39;Price&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">noise</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> 
-
-<span class="n">y</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Price&#39;</span><span class="p">]</span>
-</pre></div>
-
-
-<div class="highlight"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
-</pre></div>
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>CRIM</th>
-      <th>ZN</th>
-      <th>INDUS</th>
-      <th>CHAS</th>
-      <th>NOX</th>
-      <th>RM</th>
-      <th>AGE</th>
-      <th>DIS</th>
-      <th>RAD</th>
-      <th>TAX</th>
-      <th>PTRATIO</th>
-      <th>B</th>
-      <th>LSTAT</th>
-      <th>Price</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>0.00632</td>
-      <td>18.0</td>
-      <td>2.31</td>
-      <td>0.0</td>
-      <td>0.538</td>
-      <td>6.575</td>
-      <td>65.2</td>
-      <td>4.0900</td>
-      <td>1.0</td>
-      <td>296.0</td>
-      <td>15.3</td>
-      <td>396.90</td>
-      <td>4.98</td>
-      <td>24.0</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>0.02731</td>
-      <td>0.0</td>
-      <td>7.07</td>
-      <td>0.0</td>
-      <td>0.469</td>
-      <td>6.421</td>
-      <td>78.9</td>
-      <td>4.9671</td>
-      <td>2.0</td>
-      <td>242.0</td>
-      <td>17.8</td>
-      <td>396.90</td>
-      <td>9.14</td>
-      <td>21.6</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>0.02729</td>
-      <td>0.0</td>
-      <td>7.07</td>
-      <td>0.0</td>
-      <td>0.469</td>
-      <td>7.185</td>
-      <td>61.1</td>
-      <td>4.9671</td>
-      <td>2.0</td>
-      <td>242.0</td>
-      <td>17.8</td>
-      <td>392.83</td>
-      <td>4.03</td>
-      <td>34.7</td>
-    </tr>
-  </tbody>
-</table>
+<article class="summary">
+<div class="metadata">
+  <time datetime="2019-06-28T10:20:00-04:00" pubdate>Fri 28 June 2019</time>
+    <address class="vcard author">
+      by <a class="url fn" href=" https://lucashomil.github.io/datascience/author/lucas-ho.html">Lucas Ho</a>
+    </address>
+  in <a href=" https://lucashomil.github.io/datascience/category/misc.html">misc</a>
+<p class="tags">tagged <a href=" https://lucashomil.github.io/datascience/tag/python.html">python</a></p></div>  <div>
+    <h2>
+      <a href=" https://lucashomil.github.io/datascience/blog-2.html" rel="bookmark" title="Permalink to Automated Feature Selection">Automated Feature Selection</a>
+    </h2>
+    <p><p>In our projects, we often deal with datasets containing many features. Some of them may decrease the accuracy of models. In this blog, I am going to show you some automatic ways of selecting relevant features.
+Imagine that you got a dataset with hundreds of features and you do not …</p></p>
+  </div>
+</article><article class="summary">
+<div class="metadata">
+  <time datetime="2019-06-13T10:20:00-04:00" pubdate>Thu 13 June 2019</time>
+    <address class="vcard author">
+      by <a class="url fn" href=" https://lucashomil.github.io/datascience/author/lucas-ho.html">Lucas Ho</a>
+    </address>
+  in <a href=" https://lucashomil.github.io/datascience/category/misc.html">misc</a>
+<p class="tags">tagged <a href=" https://lucashomil.github.io/datascience/tag/python.html">python</a></p></div>  <div>
+    <h2>
+      <a href=" https://lucashomil.github.io/datascience/blog-1.html" rel="bookmark" title="Permalink to Data Cleaning">Data Cleaning</a>
+    </h2>
+    <p><p>Let me tell you one of the biggest misconceptions aspiring data science newbies have nowadays. Real-world work is not something that the newbies think while studying in school. Unfortunately, you will surprise that the real-world projects give you a headache with data cleaning. In fact, 70%-80% of your time …</p></p>
+  </div>
+</article>
+<div class="pagination">
+    Page 1 / 1
 </div>
 
-<p>Split the data into train sub dataset and test sub dataset</p>
-<div class="highlight"><pre><span></span><span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">train_size</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">test_size</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
-</pre></div>
+		  </div>	
+		  
+		  <div class="sidebar">
 
+	        <nav>
+	          <h2>Categories</h2>
+	          <ul>
+	              <li ><a href=" https://lucashomil.github.io/datascience/category/misc.html">misc</a></li>
+	          </ul>
+	        </nav>
 
-<p>Now, we are ready to look at some methods to select important features from the dataset and discuss types of feature selection algorithms in Python using the Scikit-learn.</p>
-<h2>Univariate statistics</h2>
-<p>Univariate statistics is a simple method which is by looking at each feature individually and running a statistical test to see whether it is related to the target. This method is also known as analysis of variance (ANOVA)</p>
-<p>Univariate feature selection works by selecting the strongest relationship features with the target variable based on statistical tests. Scikit-learn library is used to select a specific number of relevant features and provides different statistical tests such as SelectPercentile, SelectKBest, GenericUnivariateSelect, etc.</p>
-<p>In this case, SelectPercentile is used to decide how many features will be kept, which selects a percentile of the original features. Thereby, we have to determine a threshold on the p-value.</p>
-<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.feature_selection</span> <span class="kn">import</span> <span class="n">SelectPercentile</span>
 
-<span class="n">select</span> <span class="o">=</span> <span class="n">SelectPercentile</span><span class="p">(</span><span class="n">percentile</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
 
-<span class="n">select</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+		  </div>
 
-<span class="n">X_train_selected</span> <span class="o">=</span> <span class="n">select</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
+	  </div>
 
-<span class="k">print</span><span class="p">(</span><span class="n">X_train</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+      <footer>
+		<p role="contentinfo">
+		  © 2013 Lucas Ho - Proudly powered by <a href="http://alexis.notmyidea.org/pelican/">pelican</a>. Theme <a href="https://github.com/fle/pelican-simplegrey">pelican-simplegrey</a>.
+    	</p>
 
-<span class="k">print</span><span class="p">(</span><span class="n">X_train_selected</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+	  </footer>	
 
-<span class="n">select</span><span class="o">.</span><span class="n">get_support</span><span class="p">()</span>
-</pre></div>
-
-
-<div class="highlight"><pre><span></span><span class="p">(</span><span class="mi">253</span><span class="p">,</span> <span class="mi">38</span><span class="p">)</span>
-<span class="p">(</span><span class="mi">253</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
-
-
-
-
-
-<span class="nb">array</span><span class="p">([</span> <span class="k">True</span><span class="p">,</span> <span class="k">False</span><span class="p">,</span> <span class="k">False</span><span class="p">,</span> <span class="k">False</span><span class="p">,</span>  <span class="k">True</span><span class="p">,</span>  <span class="k">True</span><span class="p">,</span>  <span class="k">True</span><span class="p">,</span> <span class="k">False</span><span class="p">,</span> <span class="k">False</span><span class="p">,</span>
-       <span class="k">False</span><span class="p">,</span> <span class="k">False</span><span class="p">,</span>  <span class="k">True</span><span class="p">,</span>  <span class="k">True</span><span class="p">,</span> <span class="k">False</span><span class="p">,</span> <span class="k">False</span><span class="p">,</span> <span class="k">False</span><span class="p">,</span> <span class="k">False</span><span class="p">,</span> <span class="k">False</span><span class="p">,</span>
-       <span class="k">False</span><span class="p">,</span> <span class="k">False</span><span class="p">,</span> <span class="k">False</span><span class="p">,</span> <span class="k">False</span><span class="p">,</span> <span class="k">False</span><span class="p">,</span> <span class="k">False</span><span class="p">,</span> <span class="k">False</span><span class="p">,</span> <span class="k">False</span><span class="p">,</span> <span class="k">False</span><span class="p">,</span>
-       <span class="k">False</span><span class="p">,</span> <span class="k">False</span><span class="p">,</span> <span class="k">False</span><span class="p">,</span> <span class="k">False</span><span class="p">,</span> <span class="k">False</span><span class="p">,</span> <span class="k">False</span><span class="p">,</span> <span class="k">False</span><span class="p">,</span> <span class="k">False</span><span class="p">,</span> <span class="k">False</span><span class="p">,</span>
-       <span class="k">False</span><span class="p">,</span> <span class="k">False</span><span class="p">])</span>
-</pre></div>
-
-
-<p>As the Boston Housing Dataset is a regression task, f_regression is used to determine univariate scores and p-values. Moreover, for classification, chi2, f_classif, mutual_info_classif are used as input a scoring function.</p>
-<p>We plot the p-values associated with each of all the features (original features + 25 noise features). Low p-values indicate informative features.</p>
-<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.feature_selection</span> <span class="kn">import</span> <span class="n">f_classif</span><span class="p">,</span> <span class="n">f_regression</span><span class="p">,</span> <span class="n">chi2</span>
-
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
-
-<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
-
-<span class="n">F</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="n">f_regression</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
-
-<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
-
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="s1">&#39;o&#39;</span><span class="p">)</span>
-</pre></div>
-
-
-<div class="highlight"><pre><span></span><span class="p">[</span><span class="o">&lt;</span><span class="n">matplotlib</span><span class="p">.</span><span class="n">lines</span><span class="p">.</span><span class="n">Line2D</span> <span class="k">at</span> <span class="mi">0</span><span class="n">x297a5407860</span><span class="o">&gt;</span><span class="p">]</span>
-</pre></div>
-
-
-<p><img alt="png" src="images/output_16_1.png"></p>
-<p>We can obtain the features that are selected using the get_support method</p>
-<div class="highlight"><pre><span></span><span class="n">mask</span> <span class="o">=</span> <span class="n">select</span><span class="o">.</span><span class="n">get_support</span><span class="p">()</span>
-
-<span class="k">print</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
-
-<span class="c1"># visualize the mask. black is True, white is False</span>
-
-<span class="n">plt</span><span class="o">.</span><span class="n">matshow</span><span class="p">(</span><span class="n">mask</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray_r&#39;</span><span class="p">)</span>
-</pre></div>
-
-
-<div class="highlight"><pre><span></span><span class="p">[</span> <span class="k">True</span> <span class="k">False</span> <span class="k">False</span> <span class="k">False</span>  <span class="k">True</span>  <span class="k">True</span>  <span class="k">True</span> <span class="k">False</span> <span class="k">False</span> <span class="k">False</span> <span class="k">False</span>  <span class="k">True</span>
-  <span class="k">True</span> <span class="k">False</span> <span class="k">False</span> <span class="k">False</span> <span class="k">False</span> <span class="k">False</span> <span class="k">False</span> <span class="k">False</span> <span class="k">False</span> <span class="k">False</span> <span class="k">False</span> <span class="k">False</span>
- <span class="k">False</span> <span class="k">False</span> <span class="k">False</span> <span class="k">False</span> <span class="k">False</span> <span class="k">False</span> <span class="k">False</span> <span class="k">False</span> <span class="k">False</span> <span class="k">False</span> <span class="k">False</span> <span class="k">False</span>
- <span class="k">False</span> <span class="k">False</span><span class="p">]</span>
-
-
-
-
-
-<span class="o">&lt;</span><span class="n">matplotlib</span><span class="p">.</span><span class="n">image</span><span class="p">.</span><span class="n">AxesImage</span> <span class="k">at</span> <span class="mi">0</span><span class="n">x297a5787128</span><span class="o">&gt;</span>
-</pre></div>
-
-
-<p><img alt="png" src="images/output_18_2.png"></p>
-<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LinearRegression</span>
-
-<span class="n">X_test_selected</span> <span class="o">=</span> <span class="n">select</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
-
-<span class="n">ln</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">()</span>
-
-<span class="n">ln</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
-
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Score with all features: {ln.score(X_test, y_test)}&quot;</span><span class="p">)</span>
-
-<span class="n">ln</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train_selected</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
-
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Score with only selected features: {ln.score(X_test_selected, y_test)}&quot;</span><span class="p">)</span>
-</pre></div>
-
-
-<div class="highlight"><pre><span></span><span class="n">Score</span> <span class="k">with</span> <span class="k">all</span> <span class="n">features</span><span class="p">:</span> <span class="mi">0</span><span class="p">.</span><span class="mi">6276409952008808</span>
-<span class="n">Score</span> <span class="k">with</span> <span class="k">only</span> <span class="n">selected</span> <span class="n">features</span><span class="p">:</span> <span class="mi">0</span><span class="p">.</span><span class="mi">6056841906269855</span>
-</pre></div>
-
-
-<h2>Model-based Feature Selection</h2>
-<p>Next, we learn how to select features through a model-based feature selection. This method uses machine learning to model the data, studying the usefulness of a feature according to its relative importance to the predictability of the target variable. In order to do that, the model provides some way to rank the features by importance. </p>
-<p>Moreover, the obvious example is linear regression, which works by applying a coefficient multiplier to each of the features. Obviously, the higher the coefficient, the more valuable the feature.</p>
-<p>To present model-based selection in scikit-learn, you can use "SelectFromModel" in conjunction with different models. Any of these models can be made into a transformer that does feature selection by wrapping it with the SelectFromModel class:</p>
-<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.feature_selection</span> <span class="kn">import</span> <span class="n">SelectFromModel</span>
-
-<span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="kn">import</span> <span class="n">RandomForestRegressor</span>
-
-<span class="n">select</span> <span class="o">=</span> <span class="n">SelectFromModel</span><span class="p">(</span><span class="n">RandomForestRegressor</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">),</span> <span class="n">max_features</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
-</pre></div>
-
-
-<div class="highlight"><pre><span></span><span class="n">select</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
-
-<span class="n">X_train_rf</span> <span class="o">=</span> <span class="n">select</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
-
-<span class="k">print</span><span class="p">(</span><span class="n">X_train</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-
-<span class="k">print</span><span class="p">(</span><span class="n">X_train_rf</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-</pre></div>
-
-
-<div class="highlight"><pre><span></span><span class="p">(</span><span class="mi">253</span><span class="p">,</span> <span class="mi">38</span><span class="p">)</span>
-<span class="p">(</span><span class="mi">253</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
-</pre></div>
-
-
-<div class="highlight"><pre><span></span><span class="n">mask</span> <span class="o">=</span> <span class="n">select</span><span class="o">.</span><span class="n">get_support</span><span class="p">()</span>
-
-<span class="c1"># visualize the mask. black is True, white is False</span>
-
-<span class="n">plt</span><span class="o">.</span><span class="n">matshow</span><span class="p">(</span><span class="n">mask</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray_r&#39;</span><span class="p">)</span>
-</pre></div>
-
-
-<div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">matplotlib</span><span class="p">.</span><span class="n">image</span><span class="p">.</span><span class="n">AxesImage</span> <span class="k">at</span> <span class="mi">0</span><span class="n">x297a5d7bcf8</span><span class="o">&gt;</span>
-</pre></div>
-
-
-<p><img alt="png" src="images/output_24_1.png"></p>
-<div class="highlight"><pre><span></span><span class="n">X_test_rf</span> <span class="o">=</span> <span class="n">select</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
-
-<span class="n">LinearRegression</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train_rf</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_test_rf</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span>
-</pre></div>
-
-
-<div class="highlight"><pre><span></span><span class="mi">0</span><span class="p">.</span><span class="mi">6080482109223608</span>
-</pre></div>
-
-
-<h2>Recursive Feature Elimination</h2>
-<p>Recursive Feature Elimination is similar to the methods above which selects a important features that are deemed most important by the model. In simple term, it is a backward selection of the variables. Literally, this technique begins by building a model on the entire set of variables and computing an importance score for each variable. The least important variables are removed, the model is re-built, and importance scores are computed again. </p>
-<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.feature_selection</span> <span class="kn">import</span> <span class="n">RFE</span>
-
-<span class="n">select</span> <span class="o">=</span> <span class="n">RFE</span><span class="p">(</span><span class="n">RandomForestRegressor</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">),</span> <span class="n">n_features_to_select</span><span class="o">=</span><span class="mi">13</span><span class="p">)</span>
-
-<span class="n">fit</span> <span class="o">=</span> <span class="n">select</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
-
-<span class="c1"># visualize the selected features:</span>
-
-<span class="n">mask</span> <span class="o">=</span> <span class="n">select</span><span class="o">.</span><span class="n">get_support</span><span class="p">()</span>
-
-<span class="n">plt</span><span class="o">.</span><span class="n">matshow</span><span class="p">(</span><span class="n">mask</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray_r&#39;</span><span class="p">)</span>
-</pre></div>
-
-
-<div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">matplotlib</span><span class="p">.</span><span class="n">image</span><span class="p">.</span><span class="n">AxesImage</span> <span class="k">at</span> <span class="mi">0</span><span class="n">x297a5ddae80</span><span class="o">&gt;</span>
-</pre></div>
-
-
-<p><img alt="png" src="images/output_28_1.png"></p>
-<div class="highlight"><pre><span></span><span class="n">X_train_rfe</span> <span class="o">=</span> <span class="n">select</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
-
-<span class="n">X_test_rfe</span> <span class="o">=</span> <span class="n">select</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
-
-<span class="n">LinearRegression</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train_rfe</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_test_rfe</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span>
-</pre></div>
-
-
-<div class="highlight"><pre><span></span><span class="mi">0</span><span class="p">.</span><span class="mi">6587309225824689</span>
-</pre></div>
-
-
-<div class="highlight"><pre><span></span><span class="n">select</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span>
-</pre></div>
-
-
-<div class="highlight"><pre><span></span><span class="mi">0</span><span class="p">.</span><span class="mi">812742249823327</span>
-</pre></div>
-
-
-<div class="highlight"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="s2">&quot;Num Features: </span><span class="si">%d</span><span class="s2">&quot;</span><span class="o">%</span> <span class="n">fit</span><span class="o">.</span><span class="n">n_features_</span><span class="p">)</span> 
-</pre></div>
-
-
-<div class="highlight"><pre><span></span><span class="n">Num</span> <span class="n">Features</span><span class="p">:</span> <span class="mi">13</span>
-</pre></div>
-
-
-<div class="highlight"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="s2">&quot;Feature Ranking: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span> <span class="n">fit</span><span class="o">.</span><span class="n">ranking_</span><span class="p">)</span>
-</pre></div>
-
-
-<div class="highlight"><pre><span></span><span class="n">Feature</span> <span class="n">Ranking</span><span class="p">:</span> <span class="p">[</span> <span class="mi">1</span> <span class="mi">25</span> <span class="mi">16</span> <span class="mi">26</span>  <span class="mi">1</span>  <span class="mi">1</span>  <span class="mi">1</span>  <span class="mi">1</span> <span class="mi">18</span>  <span class="mi">1</span>  <span class="mi">1</span>  <span class="mi">1</span>  <span class="mi">1</span> <span class="mi">17</span>  <span class="mi">5</span> <span class="mi">22</span>  <span class="mi">1</span> <span class="mi">15</span> <span class="mi">21</span>  <span class="mi">6</span>  <span class="mi">4</span>  <span class="mi">1</span>  <span class="mi">3</span>  <span class="mi">1</span>
- <span class="mi">13</span> <span class="mi">10</span> <span class="mi">11</span>  <span class="mi">1</span>  <span class="mi">2</span> <span class="mi">14</span> <span class="mi">20</span> <span class="mi">24</span> <span class="mi">23</span>  <span class="mi">9</span> <span class="mi">12</span>  <span class="mi">7</span> <span class="mi">19</span>  <span class="mi">8</span><span class="p">]</span>
-</pre></div>
-
-
-<p>You can see that RFE chose the the top 13 features. These are marked with a choice 1 in the ranking_ array.</p>
-<p>The advantage of this approach is that it will not remove variables which were deemed insignificant at the beginning of the process, but become more and more significant as lesser features are removed. For datasets with many variables relatively strongly correlated with one another and relatively weakly correlated with the target variable, this approach may result in slightly different feature choices from those made by model-based selection. The disadvantage is that since you have to train the model many times, this approach is multiplicatively slower than the one-and-done.</p>
-<h2>Conclusion</h2>
-<p>Feature engineering is an essential parameter of a successful model. Now, we can see how important feature selection is. In order to increase the accuracy of the model, data visualization and feature selection methods are a nice tool for you to approach the mission.</p>	
-
-      
-      <h3 class="blogMeta">By <a href="#">Lucas Ho</a>, Category: <a href=" https://lucashomil.github.io/datascience/category/misc.html">misc</a></h3>
-<h3 class="blogMeta">Tags: <span><a href=" https://lucashomil.github.io/datascience/tag/python.html">python</a> / </span>
-</h3>    
-    </div><!-- end #blogItem -->
+	</div>
 	
-        <div class="blogItem">
-                <h2>Other articles</h2>
-        </div>
-        
-    
-    <div class="blogItem">
-    
-      <h2><a href=" https://lucashomil.github.io/datascience/blog-1.html">Data Cleaning</a></h2>
-      <h3>Thu 13 June 2019</h3>
-      
-      <p>Let me tell you one of the biggest misconceptions aspiring data science newbies have nowadays. Real-world work is not something that the newbies think while studying in school. Unfortunately, you will surprise that the real-world projects give you a headache with data cleaning. In fact, 70%-80% of your time …</p>	
-<h3 class="blogMeta">By <a href="#">Lucas Ho</a>, Category: <a href=" https://lucashomil.github.io/datascience/category/misc.html">misc</a></h3>
-	<a href=" https://lucashomil.github.io/datascience/blog-1.html">Continue reading …</a>
-      
-      
-	
-    
-    </div><!-- end #blogItem -->
-  
-  </div><!-- end #mainContent -->
 
-<div class="clearfloat"></div>
-
-  <div id="footer">
-  
-    <p><a href="http://css4free.com/" title="free CSS web site designs">Free CSS Gallery</a></p>
-    <p>Proudly powered by <a href="http://getpelican.com">pelican</a>, which takes great advantages of <a href="http://python.org">python</a>.
-  </div><!-- end #footer -->
-
-</div><!-- end #container -->
 </body>
 </html>
