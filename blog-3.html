@@ -46,10 +46,9 @@
 		<p>We have been playing data with Excel files for a while. Have you questioned if you have very large datasets, how can you deal with that?</p>
 <p>In other words, we need a tool that is able to capably manage or interact with very large datasets. This is why we have SQL.</p>
 <p>SQL stands for Structured Query Language. Also, SQL can create dataflows for cleaning and preparing data at high volumes. However, it is not a data visualization tool which means not for analyzing data.</p>
-<p>SQL is used in conjunction with Python that is all we need. </p>
-<p>Now, I show you some fun things about SQLite database through Python. In fact, Python provides two interfaces
+<p>SQL is used in conjunction with Python. Now, I show you some fun things about SQLite database through Python. In fact, Python provides two interfaces
 for working with SQLite database library including PySQLite and APSW.</p>
-<p>The PySQLite provides a standardized Python DBI-API 2.0 specification compliant interface to the SQLite database using a module called "sqlite3". </p>
+<p>The PySQLite provides a standardized Python DBI-API 2.0 specification compliant interface to the SQLite database using a module called "sqlite3".</p>
 <h3>Using Python's SQLite Module</h3>
 <p>In order to use the SQLite3 module, we need to have import statements</p>
 <div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sqlite3</span>
@@ -69,7 +68,7 @@ for working with SQLite database library including PySQLite and APSW.</p>
 <p>Now we can run a basic SQL query, pass it with pandas, and display the output as a DataFrame</p>
 <div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">sql_to_df</span><span class="p">(</span><span class="n">sql_query</span><span class="p">):</span>
 
-    <span class="c1"># Use pandas to pass sql query </span>
+    <span class="c1"># Use pandas to pass sql query</span>
     <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql</span><span class="p">(</span><span class="n">sql_query</span><span class="p">,</span> <span class="n">con</span> <span class="o">=</span> <span class="n">connection</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">df</span>
@@ -239,8 +238,8 @@ for working with SQLite database library including PySQLite and APSW.</p>
 </table>
 </div>
 
-<p>In a dataframe, a column may contain duplicate values; and you only want to the unique values. The DISTINCT keyword can be used to return only unique values.</p>
-<p>SELECT DISTINCT column_name 
+<p>In a dataframe, a column may contain duplicate values and you only want to the unique values. The DISTINCT keyword can be used to return only unique values.</p>
+<p>SELECT DISTINCT column_name
 FROM table_name</p>
 <div class="highlight"><pre><span></span><span class="n">query2</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39; SELECT DISTINCT(country_id)</span>
 <span class="s1">            FROM city&#39;&#39;&#39;</span>
@@ -295,8 +294,9 @@ FROM table_name</p>
 </table>
 </div>
 
-<p>We have seen how to store data into excel files, which is nothing to surprise us. Let' assume we want to store data in files which is widely used and light-weighted. This is when SQLite steps in. It is well-known among analysts. Moreover, it is serverless which means we do not need any separate server for availing its services. In this blog, we are going to explore useful module called SQLite which will allow us to store data in databases.</p>
-<h3>Let's extract data from table "country" in "sakila" dataset, and store it in sqlite file</h3>
+<p>We have seen how to store data into excel files, which is nothing to surprise us. Let' assume we want to store data in files which is widely used and light-weighted. This is when SQLite steps in. SQLite is well-known among analysts. Moreover, it is serverless which means we do not need any separate server for availing its services. In this blog, we are going to explore useful module called SQLite which will allow us to store data in databases.</p>
+<h3>Let's extract data from table "country" in "sakila" database, and store it in sqlite file</h3>
+<p>s</p>
 <h4>Once you have a Connection to the database, we can create a Cursor object and call its execute() method to perform SQL commands</h4>
 <p>In order to get all the values, we use "fetchall()", but if you want to get just one element, you could have also used "fetchone()"</p>
 <div class="highlight"><pre><span></span><span class="n">cur</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
@@ -440,8 +440,8 @@ FROM table_name</p>
 
 
 <h3>Adding Data to a Database</h3>
-<p>In order to store data in sqlite3, we need to create a database. Generally, databases are saved in ".db" or ".sqlite extension". Again, we use "connect()" method, SQLite will try to open the file that we are assigning and if it doesn't exist, it will create a new database. Let's assume we want to create a table that stores "country" output which has three variables including  "country_id", "country", and "last-update".</p>
-<p>Okay, before we create a new database, let's have a quick review on SQLite data types. SQLite defines four main types of fields:</p>
+<p>In order to store data in sqlite3, we need to create a database. Generally, databases are saved in ".db" or ".sqlite extension". Again, we use "connect()" method, SQLite will try to open the file that we are assigning and if it doesn't exist, it will create a new database. Let's assume we want to create a table that stores "country" table output which has three variables including  "country_id", "country", and "last-update".</p>
+<p>Okay, so far, so good, before we create a new database, let's have a quick review on SQLite data types. SQLite defines four main types of fields:</p>
 <ul>
 <li>NULL----a NULL value.</li>
 <li>INTEGER----a signed integer</li>
@@ -462,7 +462,7 @@ FROM table_name</p>
 
 
 <p>As you see the code above, we have another type of field for "last_update" column which is "TIMESTAMP"</p>
-<p>Now that we have a database, is time to store some data into it. You will need to do the following:</p>
+<p>Now that we have a database, it is time to store some data into it. You will need to do the following:</p>
 <div class="highlight"><pre><span></span><span class="n">dataset</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;SELECT * FROM country&#39;</span><span class="p">)</span>
 </pre></div>
 

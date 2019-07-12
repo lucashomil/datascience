@@ -3,10 +3,9 @@
 &lt;p&gt;In other words, we need a tool that is able to capably manage or interact with very large datasets. This is why we have …&lt;/p&gt;</summary><content type="html">&lt;p&gt;We have been playing data with Excel files for a while. Have you questioned if you have very large datasets, how can you deal with that?&lt;/p&gt;
 &lt;p&gt;In other words, we need a tool that is able to capably manage or interact with very large datasets. This is why we have SQL.&lt;/p&gt;
 &lt;p&gt;SQL stands for Structured Query Language. Also, SQL can create dataflows for cleaning and preparing data at high volumes. However, it is not a data visualization tool which means not for analyzing data.&lt;/p&gt;
-&lt;p&gt;SQL is used in conjunction with Python that is all we need. &lt;/p&gt;
-&lt;p&gt;Now, I show you some fun things about SQLite database through Python. In fact, Python provides two interfaces
+&lt;p&gt;SQL is used in conjunction with Python. Now, I show you some fun things about SQLite database through Python. In fact, Python provides two interfaces
 for working with SQLite database library including PySQLite and APSW.&lt;/p&gt;
-&lt;p&gt;The PySQLite provides a standardized Python DBI-API 2.0 specification compliant interface to the SQLite database using a module called "sqlite3". &lt;/p&gt;
+&lt;p&gt;The PySQLite provides a standardized Python DBI-API 2.0 specification compliant interface to the SQLite database using a module called "sqlite3".&lt;/p&gt;
 &lt;h3&gt;Using Python's SQLite Module&lt;/h3&gt;
 &lt;p&gt;In order to use the SQLite3 module, we need to have import statements&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;sqlite3&lt;/span&gt;
@@ -26,7 +25,7 @@ for working with SQLite database library including PySQLite and APSW.&lt;/p&gt;
 &lt;p&gt;Now we can run a basic SQL query, pass it with pandas, and display the output as a DataFrame&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;sql_to_df&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sql_query&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
 
-    &lt;span class="c1"&gt;# Use pandas to pass sql query &lt;/span&gt;
+    &lt;span class="c1"&gt;# Use pandas to pass sql query&lt;/span&gt;
     &lt;span class="n"&gt;df&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;pd&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;read_sql&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sql_query&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;con&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;connection&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 
     &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;df&lt;/span&gt;
@@ -196,8 +195,8 @@ for working with SQLite database library including PySQLite and APSW.&lt;/p&gt;
 &lt;/table&gt;
 &lt;/div&gt;
 
-&lt;p&gt;In a dataframe, a column may contain duplicate values; and you only want to the unique values. The DISTINCT keyword can be used to return only unique values.&lt;/p&gt;
-&lt;p&gt;SELECT DISTINCT column_name 
+&lt;p&gt;In a dataframe, a column may contain duplicate values and you only want to the unique values. The DISTINCT keyword can be used to return only unique values.&lt;/p&gt;
+&lt;p&gt;SELECT DISTINCT column_name
 FROM table_name&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;query2&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;&amp;#39;&amp;#39; SELECT DISTINCT(country_id)&lt;/span&gt;
 &lt;span class="s1"&gt;            FROM city&amp;#39;&amp;#39;&amp;#39;&lt;/span&gt;
@@ -252,8 +251,9 @@ FROM table_name&lt;/p&gt;
 &lt;/table&gt;
 &lt;/div&gt;
 
-&lt;p&gt;We have seen how to store data into excel files, which is nothing to surprise us. Let' assume we want to store data in files which is widely used and light-weighted. This is when SQLite steps in. It is well-known among analysts. Moreover, it is serverless which means we do not need any separate server for availing its services. In this blog, we are going to explore useful module called SQLite which will allow us to store data in databases.&lt;/p&gt;
-&lt;h3&gt;Let's extract data from table "country" in "sakila" dataset, and store it in sqlite file&lt;/h3&gt;
+&lt;p&gt;We have seen how to store data into excel files, which is nothing to surprise us. Let' assume we want to store data in files which is widely used and light-weighted. This is when SQLite steps in. SQLite is well-known among analysts. Moreover, it is serverless which means we do not need any separate server for availing its services. In this blog, we are going to explore useful module called SQLite which will allow us to store data in databases.&lt;/p&gt;
+&lt;h3&gt;Let's extract data from table "country" in "sakila" database, and store it in sqlite file&lt;/h3&gt;
+&lt;p&gt;s&lt;/p&gt;
 &lt;h4&gt;Once you have a Connection to the database, we can create a Cursor object and call its execute() method to perform SQL commands&lt;/h4&gt;
 &lt;p&gt;In order to get all the values, we use "fetchall()", but if you want to get just one element, you could have also used "fetchone()"&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;cur&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;connection&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;cursor&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
@@ -397,8 +397,8 @@ FROM table_name&lt;/p&gt;
 
 
 &lt;h3&gt;Adding Data to a Database&lt;/h3&gt;
-&lt;p&gt;In order to store data in sqlite3, we need to create a database. Generally, databases are saved in ".db" or ".sqlite extension". Again, we use "connect()" method, SQLite will try to open the file that we are assigning and if it doesn't exist, it will create a new database. Let's assume we want to create a table that stores "country" output which has three variables including  "country_id", "country", and "last-update".&lt;/p&gt;
-&lt;p&gt;Okay, before we create a new database, let's have a quick review on SQLite data types. SQLite defines four main types of fields:&lt;/p&gt;
+&lt;p&gt;In order to store data in sqlite3, we need to create a database. Generally, databases are saved in ".db" or ".sqlite extension". Again, we use "connect()" method, SQLite will try to open the file that we are assigning and if it doesn't exist, it will create a new database. Let's assume we want to create a table that stores "country" table output which has three variables including  "country_id", "country", and "last-update".&lt;/p&gt;
+&lt;p&gt;Okay, so far, so good, before we create a new database, let's have a quick review on SQLite data types. SQLite defines four main types of fields:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;NULL----a NULL value.&lt;/li&gt;
 &lt;li&gt;INTEGER----a signed integer&lt;/li&gt;
@@ -419,7 +419,7 @@ FROM table_name&lt;/p&gt;
 
 
 &lt;p&gt;As you see the code above, we have another type of field for "last_update" column which is "TIMESTAMP"&lt;/p&gt;
-&lt;p&gt;Now that we have a database, is time to store some data into it. You will need to do the following:&lt;/p&gt;
+&lt;p&gt;Now that we have a database, it is time to store some data into it. You will need to do the following:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;dataset&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;cur&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;execute&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;SELECT * FROM country&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
