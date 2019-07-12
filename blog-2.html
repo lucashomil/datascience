@@ -41,7 +41,7 @@
     <address class="vcard author">
       by <a class="url fn" href=" https://lucashomil.github.io/datascience/author/lucas-ho.html">Lucas Ho</a>
     </address>
-  in <a href=" https://lucashomil.github.io/datascience/category/misc.html">misc</a>
+  in <a href=" https://lucashomil.github.io/datascience/category/python.html">Python</a>
 <p class="tags">tagged <a href=" https://lucashomil.github.io/datascience/tag/python.html">python</a></p></div>		
 		<p>In our projects, we often deal with datasets containing many features. Some of them may decrease the accuracy of models. In this blog, I am going to show you some automatic ways of selecting relevant features.
 Imagine that you got a dataset with hundreds of features and you do not know if all of them are relevant in the predictive modeling problem.</p>
@@ -76,7 +76,7 @@ Imagine that you got a dataset with hundreds of features and you do not know if 
 
 <span class="n">noise</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">boston</span><span class="o">.</span><span class="n">data</span><span class="p">),</span> <span class="mi">25</span><span class="p">)))</span>
 
-<span class="n">X</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">&#39;Price&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">noise</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> 
+<span class="n">X</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">&#39;Price&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">noise</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
 <span class="n">y</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Price&#39;</span><span class="p">]</span>
 </pre></div>
@@ -285,7 +285,7 @@ Imagine that you got a dataset with hundreds of features and you do not know if 
 
 
 <h2>Model-based Feature Selection</h2>
-<p>Next, we learn how to select features through a model-based feature selection. This method uses machine learning to model the data, studying the usefulness of a feature according to its relative importance to the predictability of the target variable. In order to do that, the model provides some way to rank the features by importance. </p>
+<p>Next, we learn how to select features through a model-based feature selection. This method uses machine learning to model the data, studying the usefulness of a feature according to its relative importance to the predictability of the target variable. In order to do that, the model provides some way to rank the features by importance.</p>
 <p>Moreover, the obvious example is linear regression, which works by applying a coefficient multiplier to each of the features. Obviously, the higher the coefficient, the more valuable the feature.</p>
 <p>To present model-based selection in scikit-learn, you can use "SelectFromModel" in conjunction with different models. Any of these models can be made into a transformer that does feature selection by wrapping it with the SelectFromModel class:</p>
 <div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.feature_selection</span> <span class="kn">import</span> <span class="n">SelectFromModel</span>
@@ -335,7 +335,7 @@ Imagine that you got a dataset with hundreds of features and you do not know if 
 
 
 <h2>Recursive Feature Elimination</h2>
-<p>Recursive Feature Elimination is similar to the methods above which selects a important features that are deemed most important by the model. In simple term, it is a backward selection of the variables. Literally, this technique begins by building a model on the entire set of variables and computing an importance score for each variable. The least important variables are removed, the model is re-built, and importance scores are computed again. </p>
+<p>Recursive Feature Elimination is similar to the methods above which selects a important features that are deemed most important by the model. In simple term, it is a backward selection of the variables. Literally, this technique begins by building a model on the entire set of variables and computing an importance score for each variable. The least important variables are removed, the model is re-built, and importance scores are computed again.</p>
 <div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.feature_selection</span> <span class="kn">import</span> <span class="n">RFE</span>
 
 <span class="n">select</span> <span class="o">=</span> <span class="n">RFE</span><span class="p">(</span><span class="n">RandomForestRegressor</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">),</span> <span class="n">n_features_to_select</span><span class="o">=</span><span class="mi">13</span><span class="p">)</span>
@@ -375,7 +375,7 @@ Imagine that you got a dataset with hundreds of features and you do not know if 
 </pre></div>
 
 
-<div class="highlight"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="s2">&quot;Num Features: </span><span class="si">%d</span><span class="s2">&quot;</span><span class="o">%</span> <span class="n">fit</span><span class="o">.</span><span class="n">n_features_</span><span class="p">)</span> 
+<div class="highlight"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="s2">&quot;Num Features: </span><span class="si">%d</span><span class="s2">&quot;</span><span class="o">%</span> <span class="n">fit</span><span class="o">.</span><span class="n">n_features_</span><span class="p">)</span>
 </pre></div>
 
 
@@ -412,8 +412,8 @@ Imagine that you got a dataset with hundreds of features and you do not know if 
 	        <nav>
 	          <h2>Categories</h2>
 	          <ul>
-	              <li ><a href=" https://lucashomil.github.io/datascience/category/blog.html">Blog</a></li>
-	              <li class="active"><a href=" https://lucashomil.github.io/datascience/category/misc.html">misc</a></li>
+	              <li class="active"><a href=" https://lucashomil.github.io/datascience/category/python.html">Python</a></li>
+	              <li ><a href=" https://lucashomil.github.io/datascience/category/python-sql.html">Python, SQL</a></li>
 	          </ul>
 	        </nav>
 

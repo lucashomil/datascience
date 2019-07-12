@@ -41,10 +41,10 @@
     <address class="vcard author">
       by <a class="url fn" href=" https://lucashomil.github.io/datascience/author/lucas-ho.html">Lucas Ho</a>
     </address>
-  in <a href=" https://lucashomil.github.io/datascience/category/blog.html">Blog</a>
+  in <a href=" https://lucashomil.github.io/datascience/category/python.html">Python</a>
 <p class="tags">tagged <a href=" https://lucashomil.github.io/datascience/tag/python.html">python</a></p></div>		
 		<p>Let me tell you one of the biggest misconceptions aspiring data science newbies have nowadays. Real-world work is not something that the newbies think while studying in school. Unfortunately, you will surprise that the real-world projects give you a headache with data cleaning. In fact, 70%-80% of your time should just be collecting and cleaning data. You have to work with messy and unclean data. And, it is something that eventually becomes part of your routine work.</p>
-<p>In school, we could be provided datasets which are clean and spotless. For example, hackathons and Kaggle have a good database that we can download them and start working on the problem. Moreover, accuracy is not always the primary goal. Sometimes, you don’t really need a result as 1 plus 1 equal 2. Your boss just might want to know how you can optimize your algorithm for impact, not for the increasing of accuracy. </p>
+<p>In school, we could be provided datasets which are clean and spotless. For example, hackathons and Kaggle have a good database that we can download them and start working on the problem. Moreover, accuracy is not always the primary goal. Sometimes, you don’t really need a result as 1 plus 1 equal 2. Your boss just might want to know how you can optimize your algorithm for impact, not for the increasing of accuracy.</p>
 <p>Therefore, you should know how to deal with messy data, whether that means missing values, inconsistent formatting, malformed records, or nonsensical outliers, etc. In this blog, I’ll leverage Python’s Pandas and NumPy libraries to clean data.</p>
 <p>We will use a data set on Sacramento real estate sales as an example. The data set contains information on qualities of the property, location of the property, and time of sale.</p>
 <p>First of all, we need to import Numpy and Pandas libraries.</p>
@@ -178,7 +178,7 @@
 
 <div class="highlight"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
 
-<span class="c1"># Now let’s quickly see the names and types of the columns. </span>
+<span class="c1"># Now let’s quickly see the names and types of the columns.</span>
 <span class="c1"># Most of the time you’re going get data that is not quite what you expected</span>
 </pre></div>
 
@@ -499,7 +499,7 @@
 </pre></div>
 
 
-<div class="highlight"><pre><span></span><span class="c1"># Fixing typo </span>
+<div class="highlight"><pre><span></span><span class="c1"># Fixing typo</span>
 
 <span class="n">df</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;Unkown&#39;</span><span class="p">,</span> <span class="s1">&#39;Unknown&#39;</span><span class="p">,</span><span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 </pre></div>
@@ -902,7 +902,7 @@
 </table>
 </div>
 
-<div class="highlight"><pre><span></span><span class="c1">#Switching values </span>
+<div class="highlight"><pre><span></span><span class="c1">#Switching values</span>
 
 <span class="n">lat</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">703</span><span class="p">,</span><span class="s1">&#39;longitude&#39;</span><span class="p">]</span>
 <span class="nb">long</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">703</span><span class="p">,</span> <span class="s1">&#39;latitude&#39;</span><span class="p">]</span>
@@ -1698,8 +1698,8 @@
 	        <nav>
 	          <h2>Categories</h2>
 	          <ul>
-	              <li class="active"><a href=" https://lucashomil.github.io/datascience/category/blog.html">Blog</a></li>
-	              <li ><a href=" https://lucashomil.github.io/datascience/category/misc.html">misc</a></li>
+	              <li class="active"><a href=" https://lucashomil.github.io/datascience/category/python.html">Python</a></li>
+	              <li ><a href=" https://lucashomil.github.io/datascience/category/python-sql.html">Python, SQL</a></li>
 	          </ul>
 	        </nav>
 
