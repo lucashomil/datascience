@@ -85,6 +85,7 @@ header a {
 
 header a.title {
   font-size: 3.25em;
+  text-align: center;
 }
 
 header .feeds {
