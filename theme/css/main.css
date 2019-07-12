@@ -89,7 +89,7 @@ header a.title {
 
 header .feeds {
   float: right;
-  text-align: right;
+  text-align: center;
   width: 25%;
   height: 41px;
   padding-top: 9px;
