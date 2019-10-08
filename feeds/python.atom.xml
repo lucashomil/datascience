@@ -5,11 +5,11 @@
 &lt;p&gt;We have some common activation functions such as Sigmoid, Tanh, ReLU, Softmax, etc. In this blog, I want to introduce two functions called Sigmoid and Rectifier (ReLU - Rectifier Linear Unit). Let's see how these functions work and why they are often used.&lt;/p&gt;
 &lt;h2&gt;Sigmoid (Logistic Function)&lt;/h2&gt;
 &lt;p&gt;Firstly, let me recall you Sigmoid's formula:&lt;/p&gt;
-&lt;p&gt;&lt;img alt="png" src="images/sigmoid-function.png=250x"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="png" src="images/sigmoid-function.png =250x"&gt;&lt;/p&gt;
 &lt;p&gt;Literally, Sigmoid's input is a real value and the range of its output is between 0 and 1.&lt;/p&gt;
 &lt;p&gt;Given cost function:&lt;/p&gt;
-&lt;p&gt;&lt;img alt="png" src="images/cost-function.png=250x"&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img alt="png" src="images/cost-function-graph.png=250x"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="png" src="images/cost-function.png =250x"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="png" src="images/cost-function-graph.png =250x"&gt;&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
