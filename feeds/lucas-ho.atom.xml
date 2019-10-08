@@ -1,5 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Python Programming for Data Science - Lucas Ho</title><link href="%20https://lucashomil.github.io/datascience/" rel="alternate"></link><link href="%20https:/lucashomil.github.io/datascience/feeds/lucas-ho.atom.xml" rel="self"></link><id> https://lucashomil.github.io/datascience/</id><updated>2019-07-31T11:10:00-04:00</updated><entry><title>PyPika - Python Query Builder</title><link href="%20https:/lucashomil.github.io/datascience/blog-5.html" rel="alternate"></link><published>2019-07-31T11:10:00-04:00</published><updated>2019-07-31T11:10:00-04:00</updated><author><name>Lucas Ho</name></author><id>tag:None,2019-07-31: https:/lucashomil.github.io/datascience/blog-5.html</id><summary type="html">&lt;p&gt;Today, I am going to talk about another SQL topic - PyPika. Okay, What is PyPika?&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Python Programming for Data Science - Lucas Ho</title><link href="%20https://lucashomil.github.io/datascience/" rel="alternate"></link><link href="%20https:/lucashomil.github.io/datascience/feeds/lucas-ho.atom.xml" rel="self"></link><id> https://lucashomil.github.io/datascience/</id><updated>2019-10-07T11:10:00-04:00</updated><entry><title>From Sigmoid function to Rectifier Linear function</title><link href="%20https:/lucashomil.github.io/datascience/blog-6.html" rel="alternate"></link><published>2019-10-07T11:10:00-04:00</published><updated>2019-10-07T11:10:00-04:00</updated><author><name>Lucas Ho</name></author><id>tag:None,2019-10-07: https:/lucashomil.github.io/datascience/blog-6.html</id><summary type="html">&lt;p&gt;In a neural network, in order to have deep nets and find complex relationships through arbitrary functions, we need non-linearities which also called Activation Functions.&lt;/p&gt;
+&lt;p&gt;The activation functions are responsible for transforming the summed weighted input from the node into the activation of the node or output for that input …&lt;/p&gt;</summary><content type="html">&lt;p&gt;In a neural network, in order to have deep nets and find complex relationships through arbitrary functions, we need non-linearities which also called Activation Functions.&lt;/p&gt;
+&lt;p&gt;The activation functions are responsible for transforming the summed weighted input from the node into the activation of the node or output for that input.&lt;/p&gt;
+&lt;p&gt;We have some common activation functions such as Sigmoid, Tanh, ReLU, Softmax, etc. In this blog, I want to introduce two functions called Sigmoid and Rectifier (ReLU - Rectifier Linear Unit). Let's see how these functions work and why they are often used.&lt;/p&gt;
+&lt;h2&gt;Sigmoid (Logistic Function)&lt;/h2&gt;
+&lt;p&gt;Firstly, let me recall you Sigmoid's formula:&lt;/p&gt;
+&lt;p&gt;&lt;img alt="png" src="images/sigmoid-function.png"&gt;&lt;/p&gt;
+&lt;p&gt;Literally, Sigmoid's input is a real value and the range of its output is between 0 and 1.&lt;/p&gt;
+&lt;p&gt;Given cost function:&lt;/p&gt;
+&lt;p&gt;&lt;img alt="png" src="images/cost-function.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="png" src="images/cost-function-graph.png"&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;</content><category term="python"></category></entry><entry><title>PyPika - Python Query Builder</title><link href="%20https:/lucashomil.github.io/datascience/blog-5.html" rel="alternate"></link><published>2019-07-31T11:10:00-04:00</published><updated>2019-07-31T11:10:00-04:00</updated><author><name>Lucas Ho</name></author><id>tag:None,2019-07-31: https:/lucashomil.github.io/datascience/blog-5.html</id><summary type="html">&lt;p&gt;Today, I am going to talk about another SQL topic - PyPika. Okay, What is PyPika?&lt;/p&gt;
 &lt;p&gt;Basically, PyPika is a SQL query builder, which written in Python and doesn't limit the expressiveness of SQL. The advantages of PyPika are fast, expressive and flexible way to replace handwritten SQL.&lt;/p&gt;
 &lt;p&gt;To help you …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Today, I am going to talk about another SQL topic - PyPika. Okay, What is PyPika?&lt;/p&gt;
 &lt;p&gt;Basically, PyPika is a SQL query builder, which written in Python and doesn't limit the expressiveness of SQL. The advantages of PyPika are fast, expressive and flexible way to replace handwritten SQL.&lt;/p&gt;
