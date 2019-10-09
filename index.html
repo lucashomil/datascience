@@ -34,7 +34,7 @@
 
       <article>
         <h1><a href=" https://lucashomil.github.io/datascience/blog-6.html">From Sigmoid function to Rectifier Linear function</a></h1>
-        <p>In a neural network, in order to have deep nets and find complex relationships through arbitrary functions, we need non-linearities which also called Activation Functions.</p>
+        <p>In a neural network, in order to have deep nets and find complex relationships through arbitrary functions, we need non-linearities which are also called Activation Functions.</p>
 <p>The activation functions are responsible for transforming the summed weighted input from the node into the activation of the node or output for that input.</p>
 <p>We have some common activation functions such as Sigmoid, Tanh, ReLU, Softmax, etc. In this blog, I want to introduce two functions called Sigmoid and Rectifier (ReLU - Rectifier Linear Unit). Let's see how these functions work and why they are often used.</p>
 <h2>Sigmoid (Logistic Function)</h2>
@@ -45,11 +45,12 @@
 <p><img alt="png" src="images/cost-function-sized.png"></p>
 <p><img alt="png" src="images/cost-function-graph-sized.png"></p>
 <p>We can see the two graphs when y = 0, y = 1 which are symmetrical. Just play around with math a bit:</p>
+<p><img alt="png" src="images/math-function.png"></p>
 <p>In both cases y = 0 and y = 1, the cost function is ln(1 + e^x), but the outputs are symmetrical. In fact, when x goes to +∞, so the output will go to +∞ as well. Otherwise, when x goes to −∞, the output will go to 0.</p>
 <p>That function is called Softplus. And, the question is how it is related to Rectifier Linear function?</p>
 <h2>Rectifier Linear function</h2>
 <p>The function formula is f(x)= max(0,x) called Rectifier Linear (ReLU) function. Its value is approximately equal to the value of Softplus function.</p>
-<p>Mathematically,ln(1+e^x) ≈ ln(e^x) = x when x goes to +∞, the Softplus function's value is approximately equal to ReLU function.</p>
+<p>Mathematically, ln(1+e^x) ≈ ln(e^x) = x when x goes to +∞, the Softplus function's value is approximately equal to ReLU function.</p>
 <p>And, ln(1+e^x) ≈ ln(1) = 0 when x goes to −∞.</p>
 <p><img alt="png" src="images/ReLU-graph.png"></p>
 <p>ReLU helps the function going to 0 and +∞ faster which means it avoids and rectifies vanishing gradient problem.</p>
