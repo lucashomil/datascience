@@ -44,12 +44,15 @@
 <p>Given cost function:</p>
 <p><img alt="png" src="images/cost-function-sized.png"></p>
 <p><img alt="png" src="images/cost-function-graph-sized.png"></p>
-<div class="highlight"><pre><span></span>
-</pre></div>
-
-
-<div class="highlight"><pre><span></span>
-</pre></div>
+<p>We can see the two graphs when y = 0, y = 1 which are symmetrical. Just play around with math a bit:</p>
+<p>In both cases y = 0 and y = 1, the cost function is ln(1 + e^x), but the outputs are symmetrical. In fact, when x goes to +∞, so the output will go to +∞ as well. Otherwise, when x goes to −∞, the output will go to 0.</p>
+<p>That function is called Softplus. And, the question is how it is related to Rectifier Linear function?</p>
+<h2>Rectifier Linear function</h2>
+<p>The function formula is f(x)= max(0,x) called Rectifier Linear (ReLU) function. Its value is approximately equal to the value of Softplus function.</p>
+<p>Mathematically,ln(1+e^x) ≈ ln(e^x) = x when x goes to +∞, the Softplus function's value is approximately equal to ReLU function.</p>
+<p>And, ln(1+e^x) ≈ ln(1) = 0 when x goes to −∞.</p>
+<p>ReLU helps the function going to 0 and +∞ faster which means it avoids and rectifies vanishing gradient problem.</p>
+<p>Moreover, this function will develop Logistic Regression to SVM (Support Vector Machine).</p>
       </article>
 
       <hr />

@@ -10,12 +10,15 @@
 &lt;p&gt;Given cost function:&lt;/p&gt;
 &lt;p&gt;&lt;img alt="png" src="images/cost-function-sized.png"&gt;&lt;/p&gt;
 &lt;p&gt;&lt;img alt="png" src="images/cost-function-graph-sized.png"&gt;&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;</content><category term="python"></category></entry><entry><title>Refactoring Bad Code</title><link href="%20https:/lucashomil.github.io/datascience/blog-4.html" rel="alternate"></link><published>2019-07-27T10:20:00-04:00</published><updated>2019-07-27T10:20:00-04:00</updated><author><name>Lucas Ho</name></author><id>tag:None,2019-07-27: https:/lucashomil.github.io/datascience/blog-4.html</id><summary type="html">&lt;p&gt;I have been learning Python for a while. I recently have looked back my old labs and projects and noticed that I had written bad codes which caused memory waste, the server need more time to run. Thus, I want to summarize some bad coding habits to help you to …&lt;/p&gt;</summary><content type="html">&lt;p&gt;I have been learning Python for a while. I recently have looked back my old labs and projects and noticed that I had written bad codes which caused memory waste, the server need more time to run. Thus, I want to summarize some bad coding habits to help you to stay away from these bad habits.&lt;/p&gt;
+&lt;p&gt;We can see the two graphs when y = 0, y = 1 which are symmetrical. Just play around with math a bit:&lt;/p&gt;
+&lt;p&gt;In both cases y = 0 and y = 1, the cost function is ln(1 + e^x), but the outputs are symmetrical. In fact, when x goes to +∞, so the output will go to +∞ as well. Otherwise, when x goes to −∞, the output will go to 0.&lt;/p&gt;
+&lt;p&gt;That function is called Softplus. And, the question is how it is related to Rectifier Linear function?&lt;/p&gt;
+&lt;h2&gt;Rectifier Linear function&lt;/h2&gt;
+&lt;p&gt;The function formula is f(x)= max(0,x) called Rectifier Linear (ReLU) function. Its value is approximately equal to the value of Softplus function.&lt;/p&gt;
+&lt;p&gt;Mathematically,ln(1+e^x) ≈ ln(e^x) = x when x goes to +∞, the Softplus function's value is approximately equal to ReLU function.&lt;/p&gt;
+&lt;p&gt;And, ln(1+e^x) ≈ ln(1) = 0 when x goes to −∞.&lt;/p&gt;
+&lt;p&gt;ReLU helps the function going to 0 and +∞ faster which means it avoids and rectifies vanishing gradient problem.&lt;/p&gt;
+&lt;p&gt;Moreover, this function will develop Logistic Regression to SVM (Support Vector Machine).&lt;/p&gt;</content><category term="python"></category></entry><entry><title>Refactoring Bad Code</title><link href="%20https:/lucashomil.github.io/datascience/blog-4.html" rel="alternate"></link><published>2019-07-27T10:20:00-04:00</published><updated>2019-07-27T10:20:00-04:00</updated><author><name>Lucas Ho</name></author><id>tag:None,2019-07-27: https:/lucashomil.github.io/datascience/blog-4.html</id><summary type="html">&lt;p&gt;I have been learning Python for a while. I recently have looked back my old labs and projects and noticed that I had written bad codes which caused memory waste, the server need more time to run. Thus, I want to summarize some bad coding habits to help you to …&lt;/p&gt;</summary><content type="html">&lt;p&gt;I have been learning Python for a while. I recently have looked back my old labs and projects and noticed that I had written bad codes which caused memory waste, the server need more time to run. Thus, I want to summarize some bad coding habits to help you to stay away from these bad habits.&lt;/p&gt;
 &lt;p&gt;In the examples below, some will cause performance issues, and lead to hidden bugs or difficulties in future maintenance.&lt;/p&gt;
 &lt;h3&gt;1. Reasonably variable names&lt;/h3&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="c1"&gt;# Worst practice&lt;/span&gt;
